@@ -68,3 +68,10 @@ def test_a_bad_threshold_fails_even_when_unbound():
     body = body.replace("threshold: 0.33 — above the band by 0.06",
                         "threshold: 0.20 — above the band")
     assert check(body) == "FAIL"
+
+
+def test_the_word_above_is_dialect_too():
+    """A gate frozen in another language is not translated after the fact."""
+    body = GOOD.split("\n", 1)[1].replace("above the band by 0.06", "bandın ÜSTÜNDE")
+    assert gate.check_section(body)[0] == "FAIL"
+    assert gate.check_section(body, aliases={"above": ["üstünde"]})[0] == "PASS"

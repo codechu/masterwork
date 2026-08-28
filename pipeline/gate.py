@@ -52,6 +52,10 @@ DECIDES = re.compile(r"^.*(?:\b(?:accept|reject|veto|pass|fail)\b\s*:|>=|<=|≥|
                      re.M | re.I)
 NUMBER = re.compile(r"-?\d+(?:[.,]\d+)?")
 ABOVE = re.compile(r"\babove\b", re.I)
+# "above" is a word, and words are dialect like field names. A workshop that
+# writes its frozen gates in another language should configure the reader
+# rather than translate documents that were frozen before a run.
+ABOVE_WORDS = ("above",)
 
 
 def numbers(text: str) -> list[float]:
@@ -75,6 +79,11 @@ def sections(text: str):
     for part in re.split(r"^##\s+", text, flags=re.M)[1:]:
         title, _, body = part.partition("\n")
         yield title.strip(), body
+
+
+def _above(text: str, aliases: dict | None) -> bool:
+    words = (aliases or {}).get("above") or ABOVE_WORDS
+    return any(re.search(rf"\b{re.escape(w)}\b", text, re.I) for w in words)
 
 
 def check_section(body: str, timeout: int = 60, aliases: dict | None = None):
@@ -121,7 +130,7 @@ def check_section(body: str, timeout: int = 60, aliases: dict | None = None):
                                 f"restates it — a quotation, not a measurement"]
 
     band = close[0]
-    if not ABOVE.search(placement):
+    if not _above(placement, aliases):
         return "FAIL", [f"threshold does not claim to be above the band: {placement!r}"]
     threshold = first_number(placement)
     if threshold is None:
