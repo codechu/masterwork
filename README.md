@@ -143,6 +143,33 @@ reported, never deleted: deciding what to remove is not the line's call.
     gates/      frozen gate templates
     runs/       local run directories (ignored — heavy and re-derivable)
 
+## What you get, and what you have to make
+
+You get the line and its gates, the shape of the sitting, and the method
+written down: how a tale differs from an instruction, where a tale comes
+from, what a question has to do, why instructions come last, and how to
+tag a tale whose effect cannot be separated. That is `corpus/GROWING.md`,
+and it is the part that transfers.
+
+You do not get a corpus. Three pairs come with the repository so the
+machinery runs end to end and the form is unambiguous; they are a beginning
+and they are meant to be outgrown. The corpus is the work, and it has to be
+yours: a tale is written from something **you** measured and got wrong, and
+a corpus assembled from someone else's failures teaches your agent to avoid
+a life it never lived.
+
+We are still at it ourselves. Our own corpus has eighteen tales, took
+months, and has not yet produced a successor that beats the agent already
+running — eighteen candidates, none of them ahead of the incumbent, and the
+closest comparison came back unresolved rather than won. That is stated
+here rather than discovered later, because a method described by its
+successes only is a method you cannot use.
+
+So: take the line, take the rules, write your own tales, and expect the
+writing to be most of the work. If that sounds like too little to hand over,
+the honest answer is that the rest is not ours to give — it is the record of
+one house's mistakes, and yours will be different.
+
 ## Status
 
 Not published, and not proven. Publication needs a candidate that separates
