@@ -24,18 +24,36 @@ travels with the claim and cannot be removed by whoever quotes the number.
 """
 from __future__ import annotations
 
+import hashlib
 import json
 import os
 import subprocess
+import time
+import urllib.error
+import urllib.request
+
+
+def base_endpoint(url: str) -> str:
+    """The benchmark appends /v1/chat/completions itself.
+
+    Handing it a URL that already ends in /v1 yields /v1/v1/... and every cell
+    comes back 404 — invalid, not wrong, so the run completes and reports
+    nothing. Costs a full battery to notice, so it is normalised here.
+    """
+    url = url.rstrip("/")
+    for tail in ("/v1/chat/completions", "/chat/completions", "/v1"):
+        if url.endswith(tail):
+            return url[: -len(tail)]
+    return url
 
 
 def build_command(cfg: dict) -> list[str]:
     """Translate a run spec's journeyman block into a CLI invocation."""
     cmd = [cfg.get("executable", "journeyman"), "run",
-           "--endpoint", cfg["endpoint"]]
+           "--endpoint", base_endpoint(cfg["endpoint"])]
     optional = {
         "model": "--model", "api_key": "--api-key",
-        "judge_endpoint": "--judge", "judge_model": "--judge-model",
+        "judge_model": "--judge-model",
         "judge_api_key": "--judge-api-key",
         "judge_params_file": "--judge-params-file",
         "scenes": "--scenes", "system_file": "--system-file",
@@ -45,7 +63,28 @@ def build_command(cfg: dict) -> list[str]:
     for key, flag in optional.items():
         if cfg.get(key) is not None:
             cmd += [flag, str(cfg[key])]
+    if cfg.get("judge_endpoint"):
+        cmd += ["--judge", base_endpoint(cfg["judge_endpoint"])]
     return cmd
+
+
+def reachable(endpoint: str, timeout: float = 8.0) -> str | None:
+    """Ask the endpoint for its models before spending a battery on it.
+
+    A wrong host or port does not crash the benchmark: every cell comes back
+    invalid and the run completes with an empty report. Ten seconds here
+    saves the hour it takes to notice that.
+    """
+    url = base_endpoint(endpoint) + "/v1/models"
+    try:
+        with urllib.request.urlopen(url, timeout=timeout) as r:
+            if r.status >= 400:
+                return f"endpoint answered {r.status} at {url}"
+        return None
+    except urllib.error.HTTPError as e:
+        return f"endpoint answered {e.code} at {url}"
+    except Exception as e:
+        return f"endpoint unreachable at {url}: {e}"
 
 
 def newest_report(runs_dir: str) -> str | None:
@@ -73,6 +112,20 @@ def read_report(path: str) -> dict:
 
 def problems(summary: dict, cfg: dict) -> list[str]:
     out = []
+    # Did the benchmark actually wear the piece? --system-file is optional
+    # over there, so a spec that loses the line measures the bare model and
+    # the report looks entirely normal. The benchmark stamps the system text
+    # it used; compare it with what we sealed.
+    want = cfg.get("system_file")
+    if want and os.path.exists(want):
+        seen = ((summary.get("seal") or {}).get("agent_system_md5") or "")
+        ours = hashlib.md5(open(want, "rb").read()).hexdigest()
+        if not seen:
+            out.append("the report carries no agent system hash — the benchmark "
+                       "ran the bare model, not the candidate")
+        elif not (ours.startswith(seen) or seen.startswith(ours)):
+            out.append(f"the benchmark measured a different piece: report says "
+                       f"{seen}, the sealed candidate is {ours[:len(seen) or 12]}")
     if summary["self_judged"] and not cfg.get("allow_self_judged"):
         out.append("journeyman marked this run self_judged — the agent endpoint "
                    "also served as judge, so the score is not comparable and no "
@@ -81,9 +134,10 @@ def problems(summary: dict, cfg: dict) -> list[str]:
                    "phase counts, no purchase needed — or declare "
                    "allow_self_judged, which keeps the not-comparable stamp on "
                    "the record.")
-    if summary["nonstandard"]:
-        out.append(f"non-standard scene set ({summary['nonstandard']}) — scores "
-                   f"are not comparable with standard runs; say so in the record")
+    if summary["nonstandard"] and not cfg.get("allow_nonstandard"):
+        out.append(f"non-standard scene set ({summary['nonstandard']}) — not "
+                   f"comparable with standard runs. Declare allow_nonstandard for "
+                   f"a development pass; the stamp stays on the record either way.")
     invalid = summary.get("invalid_cells")
     if invalid:
         out.append(f"journeyman reported invalid cells: {invalid}")
@@ -94,6 +148,11 @@ def problems(summary: dict, cfg: dict) -> list[str]:
 
 def run(cfg: dict, log_path: str | None = None) -> tuple[int, dict | None, str]:
     """Run the benchmark and read its report. Returns (rc, summary, tail)."""
+    if not cfg.get("skip_preflight"):
+        unreachable = reachable(cfg["endpoint"])
+        if unreachable:
+            return 1, None, unreachable
+    started = time.time()
     cmd = build_command(cfg)
     env = dict(os.environ, PYTHONUNBUFFERED="1")
     if log_path:
@@ -109,4 +168,10 @@ def run(cfg: dict, log_path: str | None = None) -> tuple[int, dict | None, str]:
     report = cfg.get("report") or newest_report(cfg.get("runs_dir", "runs"))
     if not report or not os.path.exists(report):
         return 1, None, "benchmark finished but no report.json was found"
+    # A reused runs directory hands back yesterday's numbers when today's run
+    # produced nothing. Same shape, same fields, wrong day.
+    if not cfg.get("report") and os.path.getmtime(report) < started - 1:
+        return 1, None, (f"the newest report under {cfg.get('runs_dir')} predates "
+                         f"this run ({report}) — this run wrote none, and reading "
+                         f"the old one would report a different day's numbers")
     return 0, read_report(report), tail

@@ -220,12 +220,12 @@ class Line:
                 verdict, notes = gate_check.check_section(body)
                 results.append(verdict)
                 detail.append(f"[{verdict}] {title}: " + "; ".join(n for n in notes if n))
-                if verdict == "PASS" and measured:
+                if verdict in ("PASS", "UNBOUND") and measured:
                     applied, why = gate_check.evaluate_section(body, measured, incumbent)
                     verdicts.append((title, applied))
                     detail.append(f"    -> {applied}: " + "; ".join(why))
             bad = [v for v in results if v == "FAIL"]
-            unsure = [v for v in results if v == "UNVERIFIABLE"]
+            unsure = [v for v in results if v in ("UNVERIFIABLE", "UNBOUND")]
             if not self.stage("gate", not bad, detail):
                 self.persist("HELD_AT_GATE")
                 return 1

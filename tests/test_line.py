@@ -21,6 +21,7 @@ the piece
 # fixture was written the lazy way first and the checker caught it.
 GATE_OK = """# gate
 ## Axis
+    measure: adoption
     accept: difference >= 0.33
     band-command: python3 -c "import math;print(round(math.sqrt(0.0729), 4))"
     band-value: 0.27
@@ -109,7 +110,8 @@ def test_self_judged_measurement_never_reaches_the_gate():
         json.dump({"axes": {"grounding": {"score": 1.0, "n": 1}},
                    "self_judged": True}, open(report, "w"))
         spec["judge"] = {"journeyman": {"endpoint": "http://x/v1",
-                                        "executable": "true", "report": report}}
+                                        "executable": "true", "report": report,
+                                        "skip_preflight": True}}
         line = line_mod.Line(spec, os.path.join(tmp, "out"))
         assert line.run() == 1
         rec = json.load(open(os.path.join(tmp, "out", "run.json")))

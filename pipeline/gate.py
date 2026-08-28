@@ -129,8 +129,15 @@ def check_section(body: str, timeout: int = 60, aliases: dict | None = None):
     if threshold <= band:
         return "FAIL", [f"threshold {threshold} <= band {band:.4f} — this gate "
                         f"reads sampling noise, not effect"]
-    return "PASS", [f"band {band:.4f} (computed) · threshold {threshold} "
-                    f"· margin {threshold - band:+.4f}"]
+    sound = (f"band {band:.4f} (computed) · threshold {threshold} "
+             f"· margin {threshold - band:+.4f}")
+    # Sound rule, nothing to apply it to. Said here, at freeze time, because
+    # the alternative is learning it after the run — when a human binds the
+    # rule by hand and the verdict quietly becomes an opinion.
+    if not field(body, "measure", aliases):
+        return "UNBOUND", [sound, "no `measure:` field — this rule can never "
+                                  "touch a report; name the axis now, not later"]
+    return "PASS", [sound]
 
 
 def evaluate_section(body: str, measured: dict, incumbent: dict | None = None,
@@ -223,7 +230,7 @@ def main(argv=None) -> int:
     print("\n" + " · ".join(f"{v} {k}" for k, v in sorted(tally.items())) or "nothing to check")
     if tally.get("FAIL"):
         return 1
-    if tally.get("UNVERIFIABLE"):
+    if tally.get("UNVERIFIABLE") or tally.get("UNBOUND"):
         return 2
     return 0
 

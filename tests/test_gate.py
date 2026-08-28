@@ -7,6 +7,7 @@ sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 from pipeline import gate  # noqa: E402
 
 GOOD = """## K1
+    measure: adoption
     accept: arm difference >= 0.33
     band-command: python3 -c "import math;print(1.96*math.sqrt(0.65*0.35*2/24))"
     band-value: 0.27 (two-proportion difference, n=24 per arm)
@@ -51,3 +52,19 @@ def test_declared_non_gate_is_skipped_with_its_reason():
     verdict, notes = gate.check_section(
         "    accept: >= 0.3\n    gate-skip: results section, not a pre-registered gate\n")
     assert verdict == "SKIP" and "results section" in notes[0]
+
+
+def test_gate_without_measure_is_unbound_at_freeze_time():
+    """Valid on paper, unable to touch a number. Learn it before the run."""
+    body = GOOD.split("\n", 1)[1]
+    assert check(body) == "PASS"
+    unbound = body.replace("    measure: adoption\n", "")
+    assert check(unbound) == "UNBOUND"
+
+
+def test_a_bad_threshold_fails_even_when_unbound():
+    """Order matters: a threshold inside its band is broken either way."""
+    body = GOOD.split("\n", 1)[1].replace("    measure: adoption\n", "")
+    body = body.replace("threshold: 0.33 — above the band by 0.06",
+                        "threshold: 0.20 — above the band")
+    assert check(body) == "FAIL"

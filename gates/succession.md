@@ -7,8 +7,16 @@ Filled in with real numbers so that a copy of it is already a valid gate;
 the checker runs the band command, so a template full of placeholders would
 be a template that cannot pass its own check.
 
+`measure:` names the axis in the benchmark report and `compare:` says what
+the threshold applies to. Without them the rule is valid on paper and can
+never touch a number — you find out after the run, when a human binds it by
+hand, which is where a verdict turns into an opinion. The checker now says
+UNBOUND at freeze time instead.
+
 ## Axis: grounding (n = 24 seeds per arm)
 
+    measure: grounding
+    compare: candidate - incumbent
     accept: candidate score − incumbent score >= 0.35
     reject: incumbent score − candidate score >= 0.35
     band-command: python3 -c "import math;print(round(1.96*math.sqrt(2*0.25/24),4))"
