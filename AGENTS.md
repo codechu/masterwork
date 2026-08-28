@@ -1,0 +1,70 @@
+# Reading this repository as an agent
+
+You are probably here because someone asked you to run a character
+experiment, and you can read the whole codebase faster than a person can
+read this file. Read it anyway: what follows is not how the code works — you
+can see that — but what it refuses to do, and why working around a refusal
+is the failure this repository exists to prevent.
+
+## What this is in one paragraph
+
+A model reads a corpus of craft tales and is asked, one axis at a time, what
+it will hold to. Its own answers, distilled by itself into one standing text,
+become the identity it reads on every later request. That text is the
+*piece*. The line here produces a piece, submits it to a separate benchmark
+for scoring, and applies a decision rule that was written before the run.
+
+## The four things you must not do
+
+1. **Do not put a previous commitment, name, or identity into the ceremony
+   context.** With one present the model copies it. A copy is a role being
+   worn, not a pattern re-derived, and it also destroys the measurement:
+   you can no longer tell whether the tales carried.
+2. **Do not write or change a threshold after seeing results.** Gates are
+   read, never written, by anything that runs. If a rule turns out to be
+   wrong, say so in the record and freeze a new one for the next run; do not
+   edit the frozen file.
+3. **Do not clear a refusal by passing the flag that silences it**, unless
+   the person you are working for decided that. `allow_self_judged`,
+   `allow_nonstandard`, `allow_missing` exist so a deliberate exception can
+   be *recorded*. Setting them to make a run finish converts a stopped run
+   into a wrong number.
+4. **Do not report a score without its stamps.** A self-judged score is not
+   comparable. A run short of cells is not a smaller run. Both facts travel
+   with the number, and dropping them is how a hedge becomes a claim.
+
+## What the line will refuse, and what the refusal means
+
+| verdict | what happened | what to do |
+|---|---|---|
+| `HELD_WITHOUT_PURPOSE` | the spec does not say what the run decides | write `purpose`; if you cannot say what changes on each outcome, the run is not ready |
+| `HELD_AT_SEAL` | the piece is unreproducible, or the deployed copy differs | fix the seal or the deployment — never run "just to see" |
+| `HELD_AT_COMPLETENESS` | the grid is short | find the missing cells; if proceeding anyway, declare it |
+| `HELD_FOR_LABELLING` | labels are needed from outside | get them; the line is waiting, not broken |
+| `HELD_AT_MEASUREMENT` | the benchmark says the score is not comparable | judge from a separate endpoint, or declare and keep the stamp |
+| `HELD_AT_GATE` | a threshold sits inside its own noise | the gate is void; measure the band, write a new gate |
+| `NEEDS_SIGNATURE` | a band could not be verified, or a rule names no axis | a human decides; do not decide for them |
+| `UNRESOLVED` | the difference is smaller than the gate can resolve | this is **not** "no difference" — report the size needed to settle it |
+| `DIAGNOSTIC` | the run was declared diagnostic | no acceptance verdict may be drawn from it |
+
+## Vocabulary
+
+- **piece** — the sealed identity file; what the model wrote about itself.
+- **seal** — corpus hash, script hash, question seed, sampling seed, date.
+  Two candidates from one corpus differing only by sampling seed are
+  *different candidates*, not two samples of one.
+- **band** — how much a measurement moves when nothing changes but sampling.
+  A threshold below its band reads noise.
+- **counted vs judged axis** — counted axes are computed from replayed
+  events and are stable; judged axes are a model's label and move. Do not
+  average them together, and do not gate on a judged axis at small cell
+  counts.
+
+## Where to start
+
+    python -m pytest tests/ -q         # 54 tests, no network
+    python -m pipeline.gate gates/     # check the example gates
+    less docs/run-spec.md              # the spec, field by field
+
+Then read `corpus/GROWING.md` before writing a single tale. The corpus is
+the work; the code is what stops the work from lying to you.

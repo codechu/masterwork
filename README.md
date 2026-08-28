@@ -136,6 +136,14 @@ Quotes inside a record are capped at 300 characters — enough to recognise
 an answer, far too little to store one. Oversized run directories are
 reported, never deleted: deciding what to remove is not the line's call.
 
+## Documentation
+
+- [`AGENTS.md`](AGENTS.md) — the entry point if you are an agent: what the
+  line refuses, what each refusal means, and the four things not to do.
+- [`docs/run-spec.md`](docs/run-spec.md) — the run spec, field by field.
+- [`docs/gates.md`](docs/gates.md) — writing a gate that can hold.
+- [`corpus/GROWING.md`](corpus/GROWING.md) — growing a corpus of your own.
+
 ## Layout
 
     pipeline/   the line: one run, all gates, no manual steps
