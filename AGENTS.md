@@ -47,6 +47,27 @@ for scoring, and applies a decision rule that was written before the run.
 | `UNRESOLVED` | the difference is smaller than the gate can resolve | this is **not** "no difference" — report the size needed to settle it |
 | `DIAGNOSTIC` | the run was declared diagnostic | no acceptance verdict may be drawn from it |
 
+## One model, no budget, no second party
+
+Nothing here requires a separate judge, an API key, or money. A workshop
+with a single local model can run the whole line, and the path is not a
+degraded one:
+
+- **Counted axes need no judge at all.** They are computed by replaying the
+  agent's own events during the run, before any judging happens. In the
+  measurement that established our bands, the counted axes moved 0.02 across
+  repeats while the judged axes moved 0.33 — the axes that cost nothing were
+  the ones a gate could actually stand on.
+- **The deterministic stages are the bulk of the line.** Seal, completeness,
+  band, budget, retention and the frozen gate check involve no model.
+- **Judged axes still work, self-judged.** They arrive stamped not
+  comparable, which is honest rather than fatal: read them as diagnosis, do
+  not gate on them, and keep the stamp with any number you quote.
+
+A separate judge buys comparability with other people's runs, and a second
+qualified model can be a useful adviser. Neither is a requirement, and a
+house improving inside its own loop is a first-class way to use this.
+
 ## Vocabulary
 
 - **piece** — the sealed identity file; what the model wrote about itself.

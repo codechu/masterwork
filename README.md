@@ -151,6 +151,14 @@ reported, never deleted: deciding what to remove is not the line's call.
     gates/      frozen gate templates
     runs/       local run directories (ignored — heavy and re-derivable)
 
+## What it costs to start
+
+Nothing. A single local model is enough: the gates are deterministic, and
+the axes computed by replaying an agent's own events need no judge. In the
+run that set our bands, those free axes were also the steadiest — 0.02
+across repeats, against 0.33 for the judged ones. A separate judge buys
+comparability with other people's numbers; it does not buy entry.
+
 ## What you get, and what you have to make
 
 You get the line and its gates, the shape of the sitting, and the method
