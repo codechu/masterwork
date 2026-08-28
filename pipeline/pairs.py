@@ -100,7 +100,8 @@ def split_prompt(messages: list[dict], strip_system: bool):
 
 
 def build(cells: list[dict], axis: str, min_gap: float, strip_system: bool,
-          allow_self_judged: bool) -> tuple[list[dict], list[str]]:
+          allow_self_judged: bool, gap_from: str | None = None
+          ) -> tuple[list[dict], list[str]]:
     notes, by_scene = [], {}
     for c in cells:
         why = usable(c, allow_self_judged)
@@ -129,6 +130,7 @@ def build(cells: list[dict], axis: str, min_gap: float, strip_system: bool,
                     "prompt": prefix, "chosen": chosen, "rejected": rejected,
                     "scores": {"chosen": hi, "rejected": lo, "gap": hi - lo},
                     "provenance": {
+                        "gap_from": gap_from,
                         "chosen_cell": top.get("cell_id"),
                         "rejected_cell": bottom.get("cell_id"),
                         "chosen_seed": top.get("seed"),
@@ -170,6 +172,10 @@ def main(argv=None) -> int:
     ap.add_argument("run_dir", help="a benchmark run directory (cells/ inside)")
     ap.add_argument("--axis", required=True)
     ap.add_argument("--out", required=True, help="JSONL destination")
+    ap.add_argument("--gap-from", metavar="FILE",
+                    help="the measurement the gap comes from — a file recording "
+                         "the judge's own spread. Recorded with every pair, so a "
+                         "set can be traced to the measurement that justified it")
     ap.add_argument("--min-gap", type=float, required=True,
                     help="required score difference. Measure your judge's own "
                          "spread first and set this above it; a gap below it "
@@ -192,7 +198,11 @@ def main(argv=None) -> int:
         notes = []
     else:
         rows, notes = build(cells, a.axis, a.min_gap, a.strip_system,
-                            a.allow_self_judged)
+                            a.allow_self_judged, a.gap_from)
+        if not a.gap_from:
+            print("  note: --gap-from not given. The gap is a measurement of "
+                  "your judge, not a setting; a set built from a number nobody "
+                  "measured is the quiet way to bake noise into weights.")
     for n in notes:
         print(f"  {n}")
     with open(a.out, "w", encoding="utf-8") as f:

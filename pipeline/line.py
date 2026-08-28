@@ -105,6 +105,16 @@ class Line:
         return ok
 
     def persist(self, verdict: str) -> str:
+        # Declarations are meant to be deliberate acts, but a spec gets copied
+        # and the escape hatch becomes the habit. They ride on the verdict
+        # itself, where a reader cannot skip past them.
+        declared = [k for k in ("allow_self_judged", "allow_nonstandard")
+                    if (self.spec.get("judge", {}).get("journeyman") or {}).get(k)]
+        if (self.spec.get("cells") or {}).get("allow_missing"):
+            declared.append("allow_missing")
+        if declared:
+            verdict = f"{verdict} (declared: {', '.join(sorted(declared))})"
+        self.record["declared"] = declared
         self.record["verdict"] = verdict
         # Heavy things stay here and are disposable; the record stays light.
         # Reported, never deleted: what to remove is not the line's call.

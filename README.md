@@ -170,6 +170,41 @@ writing to be most of the work. If that sounds like too little to hand over,
 the honest answer is that the rest is not ours to give — it is the record of
 one house's mistakes, and yours will be different.
 
+## Using this badly
+
+A tool that produces the appearance of rigour is worse than no tool, and
+this one can. The failure modes are known; two are made harder here, and
+three are not automatable and belong to whoever is running it.
+
+Made harder:
+
+- **Declarations turning into defaults.** `allow_self_judged`,
+  `allow_nonstandard` and `allow_missing` are meant to be deliberate acts,
+  but specs get copied. They now ride on the verdict itself — a run comes
+  back as `COMPLETE (declared: allow_self_judged)`, where a reader cannot
+  skip past it.
+- **A gap nobody measured.** The pair cutter takes `--gap-from`, the record
+  of the judge's spread that justifies the threshold, and writes it into
+  every pair. Without it you get a warning, because a training set built
+  from a number someone chose is the quiet way to bake a judge's noise into
+  weights.
+
+Not automatable, and this is the honest part:
+
+- **A gate can execute the wrong band.** The checker runs the command and
+  compares the result; it cannot know whether that command measures the
+  thing that actually varies. Choose a small band and your threshold looks
+  comfortable.
+- **PASS is not truth.** It means a threshold sat above a measured band.
+  Whether the axis is the one worth deciding on is a separate judgement, and
+  a wrong axis passes just as cleanly as a right one. We spent a day gating
+  on resemblance to a written portrait before noticing we should have been
+  gating on the work; no tool here would have caught that.
+- **A corpus can become a rulebook.** Nothing stops forty instruction-shaped
+  tales from being written. The result is a bloated prompt and the
+  conclusion that the method does not work, when what was tested was not the
+  method.
+
 ## Status
 
 Not published, and not proven. Publication needs a candidate that separates
