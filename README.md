@@ -75,8 +75,8 @@ Producing a candidate is mechanical, and every mechanical step here has
 been skipped by hand at least once. Each skip produced a number that looked
 real and was not.
 
-    verify seal -> generate -> completeness gate -> blind label / judge
-                -> frozen gate -> persist -> status
+    state purpose -> verify seal -> generate -> completeness gate
+                  -> blind label / judge -> frozen gate -> persist -> status
 
 The frozen gate is written **before** the run and the line may not change
 it. A loop that can move its own threshold optimises the threshold, not the

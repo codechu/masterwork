@@ -129,8 +129,38 @@ class Line:
         print(f"\nverdict {verdict} · record {path}")
         return path
 
+    # A run that cannot say what it decides is the expensive kind of run: it
+    # produces numbers, and what the numbers were for gets decided afterwards,
+    # by whoever reads them. The gates below catch instruments; this one
+    # catches the operator, which is the failure the instruments cannot see.
+    PURPOSE = ("question", "decides", "axis_kind", "owner")
+
     def run(self) -> int:
         s = self.spec
+        purpose = s.get("purpose") or {}
+        missing = [k for k in self.PURPOSE if not purpose.get(k)]
+        if missing:
+            self.stage("purpose", False, [
+                f"missing: {', '.join(missing)}",
+                "question: what is being asked · decides: what changes on each "
+                "outcome · axis_kind: work | diagnostic · owner: whose call the "
+                "decision is",
+                "a run whose purpose is written after the numbers arrive is a "
+                "run whose purpose the numbers chose"])
+            self.persist("HELD_WITHOUT_PURPOSE")
+            return 4
+        if purpose["axis_kind"] not in ("work", "diagnostic"):
+            self.stage("purpose", False, [
+                f"axis_kind is {purpose['axis_kind']!r}; it must be 'work' or "
+                f"'diagnostic'. A diagnostic axis may not carry an acceptance "
+                f"verdict — resemblance to a description is not the work."])
+            self.persist("HELD_WITHOUT_PURPOSE")
+            return 4
+        self.record["purpose"] = purpose
+        self.stage("purpose", True, [f"{purpose['question']}",
+                                     f"decides: {purpose['decides']}",
+                                     f"axis: {purpose['axis_kind']} · "
+                                     f"owner: {purpose['owner']}"])
 
         if "seal" in s:
             c = s["seal"]
@@ -216,6 +246,13 @@ class Line:
                 if not self.stage("judge", rc == 0, tail if rc else f"log {log}"):
                     self.persist("FAILED_IN_JUDGING")
                     return 1
+
+        if "gate" in s and purpose["axis_kind"] == "diagnostic":
+            self.stage("gate", True, ["skipped: this run was declared "
+                                      "diagnostic, so no acceptance verdict "
+                                      "is drawn from it"])
+            self.persist("DIAGNOSTIC")
+            return 0
 
         if "gate" in s:
             path = s["gate"]["file"]

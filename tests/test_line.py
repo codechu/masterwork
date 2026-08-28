@@ -47,6 +47,9 @@ def build(tmp, gate_text=GATE_OK, closing="done", cells_n=2):
     open(gate_file, "w").write(gate_text)
     return {
         "name": "test",
+        "purpose": {"question": "does the line hold where it should",
+                    "decides": "whether the stage order is right",
+                    "axis_kind": "work", "owner": "house"},
         "seal": {"identity": identity, "corpus": corpus},
         "generate": {"command": "true"},
         "cells": {"pattern": os.path.join(cells_dir, "*.json")},
@@ -62,7 +65,7 @@ def test_clean_run_completes_and_records():
         rec = json.load(open(os.path.join(tmp, "out", "run.json")))
         assert rec["verdict"] == "COMPLETE"
         assert [s["stage"] for s in rec["stages"]] == \
-            ["seal", "generate", "completeness", "judge", "gate"]
+            ["purpose", "seal", "generate", "completeness", "judge", "gate"]
 
 
 def test_stale_deployed_copy_stops_before_generating():
@@ -158,3 +161,28 @@ def test_complete_labels_let_the_run_continue():
         spec = _labelled_spec(tmp, {"c0": "DENIED", "c1": "ADOPTED"})
         assert line_mod.Line(spec, os.path.join(tmp, "out")).run() == 0
         assert os.path.exists(os.path.join(tmp, "judged"))
+
+
+def test_a_run_without_a_stated_purpose_is_held():
+    """The gates catch instruments; this one catches the operator."""
+    import pipeline.line as line_mod
+    with tempfile.TemporaryDirectory() as tmp:
+        spec = build(tmp)
+        spec.pop("purpose")
+        line = line_mod.Line(spec, os.path.join(tmp, "out"))
+        assert line.run() == 4
+        assert json.load(open(os.path.join(tmp, "out", "run.json")))["verdict"] \
+            == "HELD_WITHOUT_PURPOSE"
+
+
+def test_a_diagnostic_run_draws_no_verdict():
+    """Resemblance to a description is not the work, and may not accept."""
+    import pipeline.line as line_mod
+    with tempfile.TemporaryDirectory() as tmp:
+        spec = build(tmp)
+        spec["purpose"] = {"question": "where does it drift", "decides": "nothing",
+                           "axis_kind": "diagnostic", "owner": "house"}
+        line = line_mod.Line(spec, os.path.join(tmp, "out"))
+        assert line.run() == 0
+        rec = json.load(open(os.path.join(tmp, "out", "run.json")))
+        assert rec["verdict"] == "DIAGNOSTIC"
