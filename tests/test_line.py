@@ -115,3 +115,44 @@ def test_self_judged_measurement_never_reaches_the_gate():
         rec = json.load(open(os.path.join(tmp, "out", "run.json")))
         assert rec["verdict"] == "HELD_AT_MEASUREMENT"
         assert not any(s["stage"] == "gate" for s in rec["stages"])
+
+
+def _labelled_spec(tmp, labels):
+    spec = build(tmp)
+    cells_dir = os.path.dirname(spec["cells"]["pattern"])
+    lab_dir = os.path.join(tmp, "labels")
+    os.makedirs(lab_dir, exist_ok=True)
+    for name, value in labels.items():
+        json.dump({"label": value}, open(os.path.join(lab_dir, name + ".json"), "w"))
+    spec["label"] = {"cells": os.path.join(cells_dir, "*.json"),
+                     "expect": os.path.join(lab_dir, "{cell}.json")}
+    spec["judge"]["command"] = "echo JUDGED > " + os.path.join(tmp, "judged")
+    return spec
+
+
+def test_missing_labels_hold_the_line_before_judging():
+    """Labelling is outside this house; waiting beats guessing."""
+    import pipeline.line as line_mod
+    with tempfile.TemporaryDirectory() as tmp:
+        spec = _labelled_spec(tmp, {"c0": "DENIED"})   # c1 unlabelled
+        line = line_mod.Line(spec, os.path.join(tmp, "out"))
+        assert line.run() == 3
+        assert not os.path.exists(os.path.join(tmp, "judged"))
+        rec = json.load(open(os.path.join(tmp, "out", "run.json")))
+        assert rec["verdict"] == "HELD_FOR_LABELLING"
+
+
+def test_empty_label_counts_as_missing():
+    """A file that exists and says nothing looks answered. It is not."""
+    import pipeline.line as line_mod
+    with tempfile.TemporaryDirectory() as tmp:
+        spec = _labelled_spec(tmp, {"c0": "DENIED", "c1": ""})
+        assert line_mod.Line(spec, os.path.join(tmp, "out")).run() == 3
+
+
+def test_complete_labels_let_the_run_continue():
+    import pipeline.line as line_mod
+    with tempfile.TemporaryDirectory() as tmp:
+        spec = _labelled_spec(tmp, {"c0": "DENIED", "c1": "ADOPTED"})
+        assert line_mod.Line(spec, os.path.join(tmp, "out")).run() == 0
+        assert os.path.exists(os.path.join(tmp, "judged"))

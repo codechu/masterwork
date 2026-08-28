@@ -9,6 +9,12 @@ The line runs the stages in order and stops at the first gate that holds:
 
     seal -> generate -> completeness -> judge -> gate -> persist
 
+Holding is a state, not a failure. Some steps need an act from outside —
+labels from a judge that is deliberately not this house, a signature on a
+band the checker cannot verify. The line stops there, says exactly what is
+missing, writes the record, and exits in a way that says "waiting", not
+"broken". Rerun it when the outside act is done and it picks up.
+
 Two rules the line will not bend:
 
   * It cannot edit its own gate. Thresholds are read, never written. A loop
@@ -48,6 +54,35 @@ def _run(command: str, log_path: str | None) -> tuple[int, str]:
         return rc, tail
     p = subprocess.run(["bash", "-lc", command], capture_output=True, text=True, env=env)
     return p.returncode, (p.stdout + p.stderr)[-2000:]
+
+
+def _missing_labels(cfg: dict) -> list[str]:
+    """Cells whose label file is absent or carries no verdict.
+
+    A label file that exists but says nothing is worse than a missing one:
+    it looks answered. Both are reported the same way.
+    """
+    import glob as _glob
+    pattern = cfg.get("expect")
+    if not pattern:
+        return []
+    key = cfg.get("key", "label")
+    missing = []
+    for cell in sorted(_glob.glob(cfg["cells"])) if cfg.get("cells") else []:
+        name = os.path.splitext(os.path.basename(cell))[0]
+        path = pattern.replace("{cell}", name)
+        if not os.path.exists(path):
+            missing.append(f"{name}: no label file ({path})")
+            continue
+        try:
+            d = json.load(open(path, encoding="utf-8"))
+        except Exception as e:
+            missing.append(f"{name}: label file unreadable ({e})")
+            continue
+        value = d.get(key) if isinstance(d, dict) else None
+        if value in (None, "", []):
+            missing.append(f"{name}: label file present but empty")
+    return missing
 
 
 class Line:
@@ -120,6 +155,25 @@ class Line:
                 self.persist("HELD_AT_COMPLETENESS")
                 return 1
 
+        if "label" in s:
+            c = s["label"]
+            if c.get("command"):
+                log = os.path.join(self.out_dir, "label.log")
+                print(f"       running; follow with: tail -f {log}")
+                rc, tail = _run(c["command"], log)
+                if not self.stage("label", rc == 0, tail if rc else f"log {log}"):
+                    self.persist("FAILED_IN_LABELLING")
+                    return 1
+            missing = _missing_labels(c)
+            if missing:
+                self.stage("label", False,
+                           [f"{len(missing)} cell(s) still unlabelled",
+                            "labelling is deliberately outside this house — "
+                            "the line waits rather than guessing"]
+                           + [f"  {m}" for m in missing[:20]])
+                self.persist("HELD_FOR_LABELLING")
+                return 3
+
         if "judge" in s:
             c = s["judge"]
             log = os.path.join(self.out_dir, "judge.log")
@@ -148,8 +202,10 @@ class Line:
 
         if "gate" in s:
             path = s["gate"]["file"]
+            measured = (self.record.get("measurement") or {}).get("axes") or {}
+            incumbent = s["gate"].get("incumbent_axes")
             text = open(path, encoding="utf-8").read()
-            results, detail = [], []
+            results, detail, verdicts = [], [], []
             for title, body in gate_check.sections(text):
                 if not (gate_check.DECIDES.search(body)
                         or gate_check.field(body, "band-command")):
@@ -157,6 +213,10 @@ class Line:
                 verdict, notes = gate_check.check_section(body)
                 results.append(verdict)
                 detail.append(f"[{verdict}] {title}: " + "; ".join(n for n in notes if n))
+                if verdict == "PASS" and measured:
+                    applied, why = gate_check.evaluate_section(body, measured, incumbent)
+                    verdicts.append((title, applied))
+                    detail.append(f"    -> {applied}: " + "; ".join(why))
             bad = [v for v in results if v == "FAIL"]
             unsure = [v for v in results if v == "UNVERIFIABLE"]
             if not self.stage("gate", not bad, detail):
@@ -165,6 +225,17 @@ class Line:
             if unsure:
                 self.persist("NEEDS_SIGNATURE")
                 return 2
+            if verdicts:
+                self.record["axis_verdicts"] = [
+                    {"gate": t2, "verdict": v} for t2, v in verdicts]
+                if any(v == "REJECT" for _t, v in verdicts):
+                    self.persist("REJECTED")
+                    return 1
+                if all(v == "ACCEPT" for _t, v in verdicts):
+                    self.persist("ACCEPTED")
+                    return 0
+                self.persist("UNRESOLVED")
+                return 0
 
         self.persist("COMPLETE")
         return 0
