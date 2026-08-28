@@ -37,6 +37,11 @@ import subprocess
 import sys
 
 FIELDS = ("band-command", "band-value", "threshold")
+# A section that names an axis is applied to the measured report as well as
+# checked for validity. Without `measure`, a gate is only a written rule and
+# a human still has to bind it to numbers — which is where a verdict quietly
+# becomes an opinion.
+APPLY = ("measure", "compare")
 # Field names are data, like seal headers: a workshop writing its gates in
 # another language passes --profile {canonical: [aliases]} rather than
 # translating frozen documents, which would edit the record after the fact.
@@ -126,6 +131,59 @@ def check_section(body: str, timeout: int = 60, aliases: dict | None = None):
                         f"reads sampling noise, not effect"]
     return "PASS", [f"band {band:.4f} (computed) · threshold {threshold} "
                     f"· margin {threshold - band:+.4f}"]
+
+
+def evaluate_section(body: str, measured: dict, incumbent: dict | None = None,
+                     aliases: dict | None = None):
+    """Apply a checked gate to measured axes. (verdict, notes).
+
+    verdict: ACCEPT | REJECT | UNRESOLVED | NOT_APPLIED
+
+    UNRESOLVED is a real answer and is kept distinct from "no difference".
+    A difference smaller than the threshold has not been shown to be absent;
+    it has been shown to be unresolvable at this size, and the note says how
+    many cells per arm it would take — otherwise the next reader turns a
+    silence into a finding.
+    """
+    axis = field(body, "measure", aliases)
+    if not axis:
+        return "NOT_APPLIED", ["no `measure:` field — the rule is written but "
+                               "never bound to a number"]
+    if axis not in measured:
+        return "NOT_APPLIED", [f"axis {axis!r} is not in the report "
+                               f"(has: {', '.join(sorted(measured)) or 'nothing'})"]
+
+    threshold = first_number(field(body, "threshold", aliases) or "")
+    band = first_number(field(body, "band-value", aliases) or "")
+    compare = (field(body, "compare", aliases) or "candidate").lower()
+    value = measured[axis]
+
+    if "incumbent" in compare:
+        if not incumbent or axis not in incumbent:
+            return "NOT_APPLIED", [f"comparison needs the incumbent's {axis}, "
+                                   f"which was not supplied"]
+        difference = value - incumbent[axis]
+        shown = (f"{axis}: candidate {value:.4f} − incumbent "
+                 f"{incumbent[axis]:.4f} = {difference:+.4f}")
+    else:
+        difference = value
+        shown = f"{axis}: {value:.4f} (absolute)"
+
+    if threshold is None:
+        return "NOT_APPLIED", [shown, "threshold is not numeric"]
+    if difference >= threshold:
+        return "ACCEPT", [shown, f"clears +{threshold}"]
+    if difference <= -threshold:
+        return "REJECT", [shown, f"falls short by {threshold}"]
+
+    note = [shown, f"inside ±{threshold} — NOT resolvable at this size, "
+                   f"which is not the same as no difference"]
+    if band and abs(difference) > 0:
+        # Band shrinks as 1/sqrt(n); say what size would settle this.
+        note.append(f"a difference of {abs(difference):.4f} needs a band below "
+                    f"it: roughly {(band / abs(difference)) ** 2:.1f}x the cells "
+                    f"used for this band")
+    return "UNRESOLVED", note
 
 
 def main(argv=None) -> int:

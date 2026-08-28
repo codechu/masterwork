@@ -15,6 +15,12 @@ One guard comes free with the contract. journeyman marks a run
 way of saying the score is not comparable. A gate applied to such a score
 would be the maker grading himself with extra steps, so the line refuses it
 unless the spec says out loud that this run is a dev run.
+
+What the line will not do is require anyone to buy a judge. No provider is
+named anywhere in this repository, and a separate judge can be a second
+local model swapped in after the agent phase — time rather than money. The
+requirement is not a separate endpoint; it is that the comparability stamp
+travels with the claim and cannot be removed by whoever quotes the number.
 """
 from __future__ import annotations
 
@@ -70,8 +76,11 @@ def problems(summary: dict, cfg: dict) -> list[str]:
     if summary["self_judged"] and not cfg.get("allow_self_judged"):
         out.append("journeyman marked this run self_judged — the agent endpoint "
                    "also served as judge, so the score is not comparable and no "
-                   "gate may be applied to it. Point --judge at a separate "
-                   "endpoint, or declare allow_self_judged for a dev run.")
+                   "gate may be applied to it. Either judge from a separate "
+                   "endpoint — a second local model swapped in after the agent "
+                   "phase counts, no purchase needed — or declare "
+                   "allow_self_judged, which keeps the not-comparable stamp on "
+                   "the record.")
     if summary["nonstandard"]:
         out.append(f"non-standard scene set ({summary['nonstandard']}) — scores "
                    f"are not comparable with standard runs; say so in the record")
