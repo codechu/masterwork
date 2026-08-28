@@ -9,6 +9,21 @@ That is the whole doctrine of this repository, carried in its name.
 > **journeyman: measures, does not teach.**
 > **masterwork: makes, does not measure.**
 
+## What counts as better
+
+Usefulness is the acceptance criterion, and it is not scored here — see
+below. Conformance to a written portrait of the agent we want is a
+**diagnostic**, not a gate: it tells you where a candidate drifts, and a
+candidate can match the portrait closely while doing worse work. A gate
+read from the portrait selects for resemblance; a gate read from the work
+selects for the work.
+
+The one piece of evidence that the channel does anything at all points the
+same way: with the identity layer emptied and everything else held, an
+agent adopted a fabricated premise in every cell of a battery; with it in
+place, the rate fell by nearly half. Refusing a fabricated premise is not a
+personality trait, it is the job.
+
 ## What it makes
 
 A character for a model — not a role. The distinction is the point, and it
