@@ -1,41 +1,67 @@
-# character-kit (working name)
+# masterwork
 
-A workflow for giving a model a character — not a role — and the
-production line that runs it without forgetting a step.
+A *masterwork* is the piece a journeyman submits to the guild to qualify as
+a master. Not "a great work" — the modern reading is a corruption. It is the
+piece you make and hand over, and the guild, not the maker, decides.
 
-**Not published.** Two gates must both pass before this goes public:
-a candidate that separates from the baseline through a frozen gate, and
-a naming/positioning pass. Neither is done.
+That is the whole doctrine of this repository, carried in its name.
 
-## What it is
+> **journeyman: measures, does not teach.**
+> **masterwork: makes, does not measure.**
 
-A model is given a corpus of third-person craft tales, then asked — in a
-fresh context with no prior commitment in view — what it will hold to.
-The answer it writes in its own words becomes its identity file. Nothing
-is asserted at it; the pattern has to survive being re-derived.
+## What it makes
 
-The line that runs this is mechanical and easy to get wrong by hand:
+A character for a model — not a role. The distinction is the point, and it
+is mechanical rather than philosophical:
 
-    seal-check -> generate -> completeness gate -> blind label / judge
-                -> frozen gate -> persist -> status line
+- **Tales, not instructions.** The corpus is third-person craft stories. A
+  story gives a pattern; "behave like X" gives a role, and a role is worn
+  and dropped. Assigned traits do not survive a fresh context.
+- **The ceremony is anchorless.** No prior commitment, no prior name is in
+  view when the model is asked what it will hold to. If the old answer is
+  in the context, the model copies it — and a copy is a role again. The
+  commitment has to be re-derived from the tales, every time.
+- **What binds is the model's own sentence.** The identity file is not
+  written for the model; it is what the model wrote when asked. On every
+  later request it reads its own past words, not an instruction.
+- **The proof is unprompted behaviour.** Not "who are you" — a fresh,
+  same-class task that never mentions character. A role is performed when
+  asked for; a character shows up unasked.
 
-Every one of those steps has been skipped by hand at least once, and each
-skip produced a wrong number that looked like a real one. That is what
-this repository is for.
+The piece that gets submitted is the sealed identity file: the model's own
+words, plus the maker's mark — corpus hash, script hash, question seed,
+sampling seed, date. Without those five it cannot be reproduced, so it
+cannot be sealed.
 
-## What it is not
+## The line
 
-It does not measure. Measurement belongs to
-[journeyman](https://github.com/codechu/journeyman); the dependency runs
-one way, kit -> journeyman, and never back. A repository that both shapes
-a model and scores it undermines every score it reports.
+Producing a candidate is mechanical, and every mechanical step here has
+been skipped by hand at least once. Each skip produced a number that looked
+real and was not.
+
+    verify seal -> generate -> completeness gate -> blind label / judge
+                -> frozen gate -> persist -> status
+
+The frozen gate is written **before** the run and the line may not change
+it. A loop that can move its own threshold optimises the threshold, not the
+work.
+
+## What it does not do
+
+It does not measure. Scoring belongs to
+[journeyman](https://github.com/codechu/journeyman); the dependency runs one
+way and never back. A repository that both shapes a model and grades it
+hollows out every score it reports — the guild does not judge its own piece.
 
 ## Layout
 
-    pipeline/   the production line: one run, all gates, no manual steps
+    pipeline/   the line: one run, all gates, no manual steps
     tools/      instruments the line calls (ceremony, judges, gate checks)
-    gates/      frozen gate templates — thresholds are written before a run
+    gates/      frozen gate templates
 
 ## Status
 
-Working name. Working method. Nothing here is a claim yet.
+Not published, and not proven. Publication needs a candidate that separates
+from the baseline through a frozen gate. As of today there is none: the best
+candidate sits behind the incumbent. The name is honest about that — a
+masterwork is submitted, and it can be refused.
