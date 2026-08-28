@@ -39,6 +39,7 @@ import time
 from pipeline import cells as cells_gate
 from pipeline import gate as gate_check
 from pipeline import measure
+from pipeline import retain
 from pipeline import seal as seal_gate
 
 
@@ -105,6 +106,12 @@ class Line:
 
     def persist(self, verdict: str) -> str:
         self.record["verdict"] = verdict
+        # Heavy things stay here and are disposable; the record stays light.
+        # Reported, never deleted: what to remove is not the line's call.
+        self.record["bytes"] = retain.dir_size(self.out_dir)
+        for note in retain.check(self.out_dir, self.spec.get("max_run_bytes",
+                                                             50_000_000)):
+            print(f"[retention] {note}")
         self.record["finished"] = time.strftime("%Y-%m-%d %H:%M:%S")
         path = os.path.join(self.out_dir, "run.json")
         json.dump(self.record, open(path, "w", encoding="utf-8"),

@@ -95,11 +95,32 @@ a model through one narrow seam — a command, or an endpoint named in
 config — never through a particular workshop's infrastructure. A gate that
 only fires on one house's plumbing is not a gate, it is a habit.
 
+## What a run leaves behind
+
+A line that keeps everything becomes a disk problem and then a slow one:
+every later search walks transcripts nobody will reopen. A line that keeps
+nothing cannot defend a number six weeks on. The split is not "keep less":
+
+- **Local and disposable** — transcripts, judge logs, per-cell records, the
+  benchmark's run directory. They live under `runs/`, which version control
+  ignores, and they are re-derivable: the seal names the corpus, the script
+  and both seeds.
+- **Archived on purpose** — the run record and the benchmark's report. Both
+  are kilobytes, and between them they carry the seal, the grid, the axes,
+  the gate and the verdict. That is what a later disagreement is settled
+  with.
+
+`pipeline/retain.py archive <run-dir> <dest>` copies out exactly those two.
+Quotes inside a record are capped at 300 characters — enough to recognise
+an answer, far too little to store one. Oversized run directories are
+reported, never deleted: deciding what to remove is not the line's call.
+
 ## Layout
 
     pipeline/   the line: one run, all gates, no manual steps
     tools/      instruments the line calls (ceremony, judges, gate checks)
     gates/      frozen gate templates
+    runs/       local run directories (ignored — heavy and re-derivable)
 
 ## Status
 
