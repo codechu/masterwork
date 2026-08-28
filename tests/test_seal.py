@@ -73,3 +73,19 @@ def test_profile_lets_a_workshop_keep_its_dialect():
                    "question_seed": ["soru-sirasi seed"],
                    "sampling_seed": ["ornekleme seed"], "date": ["tarih"]}
         assert seal.read_seal(p, profile).complete
+
+
+def test_pattern_recovers_a_field_that_is_not_key_value():
+    """An older seal carries its date in the title line. The file is its bytes:
+    editing it to add a field would change the piece. Teach the reader."""
+    with tempfile.TemporaryDirectory() as tmp:
+        p = write(tmp, "# SEAL — candidate, 2026-08-26\n# corpus md5: %s\n"
+                       "# script md5: %s\n# question seed: 0 · sampling seed: 7\n"
+                       % ("0" * 32, "1" * 32))
+        profile = {"corpus_hash": ["corpus md5"], "script_hash": ["script md5"],
+                   "question_seed": ["question seed"],
+                   "sampling_seed": ["sampling seed"],
+                   "date": {"aliases": ["date"], "pattern": r"(\d{4}-\d{2}-\d{2})"}}
+        s = seal.read_seal(p, profile)
+        assert s.complete, s.missing
+        assert s.fields["date"] == "2026-08-26"

@@ -21,7 +21,11 @@ bytes, and refuses on mismatch rather than warning.
 
 Seal fields are read from leading comment lines (`# key: value`). Field names
 live in a profile, not in this code, so a workshop can keep its own dialect
-without the line having to know about it.
+without the line having to know about it. A profile entry may also carry a
+regular expression, for the case where a field exists in the header but not
+in `key: value` form — an older seal whose date sits in its title line, say.
+That indirection is deliberate: a sealed file is its bytes, and editing one
+to please a reader changes the piece. Teach the reader the dialect instead.
 """
 from __future__ import annotations
 
@@ -86,21 +90,43 @@ class Seal:
         return not self.missing
 
 
-def read_seal(path: str, profile: dict[str, list[str]] | None = None) -> Seal:
+def raw_header(path: str) -> str:
+    lines = []
+    with open(path, encoding="utf-8") as f:
+        for raw in f:
+            if not raw.startswith("#"):
+                break
+            lines.append(raw)
+    return "".join(lines)
+
+
+def _lookup(canonical: str, spec, header: dict[str, str], raw: str):
+    """A profile entry is a list of aliases, or a dict that may add a pattern."""
+    aliases = spec if isinstance(spec, list) else (spec or {}).get("aliases", [])
+    for alias in aliases:
+        if alias.lower() in header:
+            return header[alias.lower()]
+    pattern = (spec or {}).get("pattern") if isinstance(spec, dict) else None
+    if pattern:
+        m = re.search(pattern, raw)
+        if m:
+            return (m.group(1) if m.groups() else m.group(0)).strip()
+    return None
+
+
+def read_seal(path: str, profile: dict | None = None) -> Seal:
     profile = profile or DEFAULT_PROFILE
-    header = read_header(path)
+    header, raw = read_header(path), raw_header(path)
     fields, missing = {}, []
     for canonical in REQUIRED:
-        for alias in profile.get(canonical, []):
-            if alias.lower() in header:
-                fields[canonical] = header[alias.lower()]
-                break
-        else:
+        value = _lookup(canonical, profile.get(canonical), header, raw)
+        if value is None:
             missing.append(canonical)
-    for alias in profile.get("name", []):
-        if alias.lower() in header:
-            fields["name"] = header[alias.lower()]
-            break
+        else:
+            fields[canonical] = value
+    name = _lookup("name", profile.get("name"), header, raw)
+    if name:
+        fields["name"] = name
     return Seal(fields=fields, missing=missing)
 
 
