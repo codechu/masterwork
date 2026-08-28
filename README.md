@@ -53,6 +53,24 @@ It does not measure. Scoring belongs to
 way and never back. A repository that both shapes a model and grades it
 hollows out every score it reports — the guild does not judge its own piece.
 
+## Dependencies
+
+The pipeline imports the standard library and nothing else. There is no
+model client in here, no HTTP, no vendor SDK, and no reference to any
+particular serving stack.
+
+That is not an accident of youth. Generation and judging are commands in
+the run spec, so whatever produces a candidate — a local server, a hosted
+API, a script someone wrote this morning — is wiring, and the gates apply
+the same way regardless. A workshop swapping its inference stack should not
+have to touch a line of this.
+
+The rule survives the next step too. The ceremony that actually makes a
+candidate still lives outside this repository; when it moves in, it reaches
+a model through one narrow seam — a command, or an endpoint named in
+config — never through a particular workshop's infrastructure. A gate that
+only fires on one house's plumbing is not a gate, it is a habit.
+
 ## Layout
 
     pipeline/   the line: one run, all gates, no manual steps

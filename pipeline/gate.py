@@ -37,6 +37,10 @@ import subprocess
 import sys
 
 FIELDS = ("band-command", "band-value", "threshold")
+# Field names are data, like seal headers: a workshop writing its gates in
+# another language passes --profile {canonical: [aliases]} rather than
+# translating frozen documents, which would edit the record after the fact.
+DEFAULT_FIELD_ALIASES: dict[str, list[str]] = {f: [f] for f in FIELDS}
 SKIP = re.compile(r"^\s*gate-skip\s*:\s*(.+)$", re.M | re.I)
 # A section that decides something: an explicit verdict word or a comparison.
 DECIDES = re.compile(r"^.*(?:\b(?:accept|reject|veto|pass|fail)\b\s*:|>=|<=|≥|≤).*$",
@@ -54,9 +58,12 @@ def first_number(text: str):
     return n[0] if n else None
 
 
-def field(body: str, name: str):
-    m = re.search(rf"^\s*{re.escape(name)}\s*:\s*(.+)$", body, re.M | re.I)
-    return m.group(1).strip() if m else None
+def field(body: str, name: str, aliases: dict | None = None):
+    for alias in (aliases or DEFAULT_FIELD_ALIASES).get(name, [name]):
+        m = re.search(rf"^\s*{re.escape(alias)}\s*:\s*(.+)$", body, re.M | re.I)
+        if m:
+            return m.group(1).strip()
+    return None
 
 
 def sections(text: str):
@@ -65,13 +72,13 @@ def sections(text: str):
         yield title.strip(), body
 
 
-def check_section(body: str, timeout: int = 60):
+def check_section(body: str, timeout: int = 60, aliases: dict | None = None):
     """Return (verdict, notes). verdict: PASS | FAIL | UNVERIFIABLE | SKIP."""
     skip = SKIP.search(body)
     if skip:
         return "SKIP", [f"declared not a gate: {skip.group(1).strip()}"]
 
-    missing = [f for f in FIELDS if field(body, f) is None]
+    missing = [f for f in FIELDS if field(body, f, aliases) is None]
     if len(missing) == len(FIELDS):
         line = DECIDES.search(body)
         return "FAIL", ["decides something but no band was measured",
@@ -81,9 +88,9 @@ def check_section(body: str, timeout: int = 60):
     if missing:
         return "FAIL", [f"missing: {', '.join(missing)} — the gate is void"]
 
-    command = field(body, "band-command")
-    written = first_number(field(body, "band-value") or "")
-    placement = field(body, "threshold") or ""
+    command = field(body, "band-command", aliases)
+    written = first_number(field(body, "band-value", aliases) or "")
+    placement = field(body, "threshold", aliases) or ""
 
     try:
         p = subprocess.run(["bash", "-lc", command], capture_output=True,
@@ -125,8 +132,14 @@ def main(argv=None) -> int:
     ap = argparse.ArgumentParser(description="check frozen gate files")
     ap.add_argument("paths", nargs="+", help="gate files, or a directory to walk")
     ap.add_argument("--timeout", type=int, default=60)
+    ap.add_argument("--profile", help="JSON map {canonical field: [aliases]}")
     a = ap.parse_args(argv)
 
+    aliases = dict(DEFAULT_FIELD_ALIASES)
+    if a.profile:
+        import json as _json
+        for k, v in _json.load(open(a.profile, encoding="utf-8")).items():
+            aliases[k] = list(v) + aliases.get(k, [])
     files = []
     for p in a.paths:
         files.extend(sorted(glob.glob(os.path.join(p, "**", "*.md"), recursive=True))
@@ -137,9 +150,9 @@ def main(argv=None) -> int:
         text = open(path, encoding="utf-8").read()
         printed = False
         for title, body in sections(text):
-            if not (DECIDES.search(body) or field(body, "band-command")):
+            if not (DECIDES.search(body) or field(body, "band-command", aliases)):
                 continue
-            verdict, notes = check_section(body, a.timeout)
+            verdict, notes = check_section(body, a.timeout, aliases)
             if not printed:
                 print(f"--- {path}")
                 printed = True
