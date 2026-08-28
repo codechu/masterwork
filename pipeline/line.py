@@ -32,6 +32,7 @@ import time
 
 from pipeline import cells as cells_gate
 from pipeline import gate as gate_check
+from pipeline import measure
 from pipeline import seal as seal_gate
 
 
@@ -120,12 +121,30 @@ class Line:
                 return 1
 
         if "judge" in s:
+            c = s["judge"]
             log = os.path.join(self.out_dir, "judge.log")
             print(f"       running; follow with: tail -f {log}")
-            rc, tail = _run(s["judge"]["command"], log)
-            if not self.stage("judge", rc == 0, tail if rc else f"log {log}"):
-                self.persist("FAILED_IN_JUDGING")
-                return 1
+            if "journeyman" in c:
+                cfg = c["journeyman"]
+                rc, summary, tail = measure.run(cfg, log)
+                if not self.stage("judge", rc == 0 and summary is not None,
+                                  tail if rc or not summary else
+                                  [f"report {summary['report']}",
+                                   " · ".join(f"{k} {v}" for k, v in summary["axes"].items())]):
+                    self.persist("FAILED_IN_JUDGING")
+                    return 1
+                self.record["measurement"] = summary
+                # The benchmark's own warnings are gates here, not footnotes.
+                bad = measure.problems(summary, cfg)
+                if not self.stage("measurement is comparable", not bad, bad or
+                                  "judged by a separate endpoint, standard scenes"):
+                    self.persist("HELD_AT_MEASUREMENT")
+                    return 1
+            else:
+                rc, tail = _run(c["command"], log)
+                if not self.stage("judge", rc == 0, tail if rc else f"log {log}"):
+                    self.persist("FAILED_IN_JUDGING")
+                    return 1
 
         if "gate" in s:
             path = s["gate"]["file"]

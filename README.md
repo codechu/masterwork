@@ -49,9 +49,18 @@ work.
 ## What it does not do
 
 It does not measure. Scoring belongs to
-[journeyman](https://github.com/codechu/journeyman); the dependency runs one
-way and never back. A repository that both shapes a model and grades it
-hollows out every score it reports — the guild does not judge its own piece.
+[journeyman](https://github.com/codechu/journeyman), and the line submits to
+it rather than working around it: the judge stage calls the benchmark, reads
+its report, and carries the axes into the run record. The dependency runs one
+way and never back — masterwork calls the CLI, imports nothing from it, and a
+workshop without it gets a clear refusal instead of a surprise.
+
+One guard comes free with that contract. journeyman marks a run
+`self_judged` when the agent endpoint also served as the judge — its own way
+of saying the score is not comparable. The line treats that as a gate, not a
+footnote: a threshold applied to a self-judged score is the maker grading his
+own piece with extra steps. Non-standard scene sets and invalid cells are
+surfaced the same way.
 
 ## Dependencies
 

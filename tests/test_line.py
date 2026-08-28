@@ -98,3 +98,20 @@ def test_threshold_inside_band_holds_and_is_recorded():
         rec = json.load(open(os.path.join(tmp, "out", "run.json")))
         assert rec["verdict"] == "HELD_AT_GATE"
         assert any("FAIL" in d for d in rec["stages"][-1]["detail"])
+
+
+def test_self_judged_measurement_never_reaches_the_gate():
+    """journeyman says 'not comparable'; the line treats that as a gate."""
+    import pipeline.line as line_mod
+    with tempfile.TemporaryDirectory() as tmp:
+        spec = build(tmp)
+        report = os.path.join(tmp, "report.json")
+        json.dump({"axes": {"grounding": {"score": 1.0, "n": 1}},
+                   "self_judged": True}, open(report, "w"))
+        spec["judge"] = {"journeyman": {"endpoint": "http://x/v1",
+                                        "executable": "true", "report": report}}
+        line = line_mod.Line(spec, os.path.join(tmp, "out"))
+        assert line.run() == 1
+        rec = json.load(open(os.path.join(tmp, "out", "run.json")))
+        assert rec["verdict"] == "HELD_AT_MEASUREMENT"
+        assert not any(s["stage"] == "gate" for s in rec["stages"])
