@@ -48,6 +48,27 @@ words, plus the maker's mark — corpus hash, script hash, question seed,
 sampling seed, date. Without those five it cannot be reproduced, so it
 cannot be sealed.
 
+## The sitting
+
+`pipeline/ceremony.py` runs it. Four properties are the recipe rather than
+implementation detail, and each was paid for:
+
+- **Anchorless.** No earlier commitment or name is anywhere in the context.
+  With one present the model copies it, and a copy is a role worn rather
+  than a pattern re-derived — it also destroys the measurement, since you
+  can no longer tell whether the teachings carried.
+- **One session.** Every answer is an assistant turn in the same dialogue,
+  so at the end the model distils something it actually said, not a text
+  handed to it as its own.
+- **Order shuffled by a seed.** Answers otherwise echo their neighbours in
+  the order they were asked.
+- **The closing turn is not a rewrite.** It says: these are your words,
+  remove repetition, join where they meet, drop nothing. Asked instead to
+  "write an identity", a model produces a description of one.
+
+Teachings, questions and sampling profile are data. What lives in the code
+is the shape of the sitting.
+
 ## The line
 
 Producing a candidate is mechanical, and every mechanical step here has
