@@ -9,6 +9,17 @@ loop has turned around and the work has started serving the instrument.
 
 ## Unreleased
 
+- **`--script` verification could never pass.** The sitting hashed a
+  re-serialisation of the parsed script (`json.dumps`, sorted keys) while
+  the seal gate hashes the file on disk, so every piece the ceremony had
+  ever sealed carried a script hash that could not match its own script.
+  A guard that always fires teaches the operator to stop passing the flag.
+  It now hashes the file's bytes, which also means `md5sum` reproduces it
+  without running this code. Found by walking the beginner's path with the
+  starter corpus, not by a test — the test that existed passed the corpus
+  to the gate and not the script, so the one broken axis was the one it did
+  not check. It checks both now.
+
 - **The badges said things that had stopped being true.** One read
   `status: not published` on a package that is on PyPI, and another read
   `dependencies: 0` while `journeyman-bench` is a declared requirement —

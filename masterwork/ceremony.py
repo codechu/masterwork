@@ -79,7 +79,7 @@ def _md5(text: str) -> str:
     return hashlib.md5(text.encode()).hexdigest()
 
 
-def hold(corpus: str, script: dict, endpoint: str, model: str | None = None,
+def hold(corpus: str, script: dict, script_hash: str, endpoint: str, model: str | None = None,
          params: dict | None = None, order_seed: int = 0,
          sampling_seed: int | None = None, max_tokens: int = 8000,
          report=lambda *_: None) -> dict:
@@ -135,7 +135,14 @@ def hold(corpus: str, script: dict, endpoint: str, model: str | None = None,
         "order_seed": order_seed,
         "sampling_seed": sampling_seed,
         "corpus_hash": _md5(corpus),
-        "script_hash": _md5(json.dumps(script, sort_keys=True, ensure_ascii=False)),
+        # The file's bytes, not a re-serialisation of the parsed object.
+        # The seal gate hashes what is on disk, so a hash taken from
+        # `json.dumps` could never match it — `--script` verification
+        # was unpassable for every piece this ceremony had ever sealed,
+        # and a guard that always fires teaches the operator to stop
+        # passing the flag. It must also be reproducible with `md5sum`
+        # by someone who does not run this code.
+        "script_hash": script_hash,
         "questions_asked": [q["label"] for q in questions],
         "date": time.strftime("%Y-%m-%d"),
     }
@@ -182,12 +189,14 @@ def main(argv=None) -> int:
     a = ap.parse_args(argv)
 
     corpus = open(a.corpus, encoding="utf-8").read()
-    script = json.load(open(a.script, encoding="utf-8"))
+    script_bytes = open(a.script, "rb").read()
+    script = json.loads(script_bytes)
+    script_hash = hashlib.md5(script_bytes).hexdigest()
     params = json.load(open(a.params_file, encoding="utf-8")) if a.params_file else None
 
     print(f"sitting: {len(script['questions'])} questions, order seed "
           f"{a.order_seed}, sampling seed {a.sampling_seed}", file=sys.stderr)
-    transcript = hold(corpus, script, a.endpoint, a.model, params,
+    transcript = hold(corpus, script, script_hash, a.endpoint, a.model, params,
                       a.order_seed, a.sampling_seed, a.max_tokens,
                       report=lambda m: print(m, file=sys.stderr, flush=True))
 

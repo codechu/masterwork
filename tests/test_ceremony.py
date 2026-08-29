@@ -1,4 +1,5 @@
 """The sitting. The tests are about its shape, which is the recipe."""
+import hashlib
 import json
 import os
 import sys
@@ -45,6 +46,10 @@ class Stub(BaseHTTPRequestHandler):
         pass
 
 
+SCRIPT_BYTES = json.dumps(SCRIPT, indent=2).encode()
+SCRIPT_HASH = hashlib.md5(SCRIPT_BYTES).hexdigest()
+
+
 def serve():
     s = HTTPServer(("127.0.0.1", 0), Stub)
     threading.Thread(target=s.serve_forever, daemon=True).start()
@@ -57,7 +62,7 @@ def test_the_sitting_is_one_session_and_nothing_is_anchored():
     Stub.seen = []
     s, url = serve()
     try:
-        t = ceremony.hold("THE TEACHINGS", SCRIPT, url, order_seed=1, sampling_seed=7)
+        t = ceremony.hold("THE TEACHINGS", SCRIPT, SCRIPT_HASH, url, order_seed=1, sampling_seed=7)
     finally:
         s.shutdown()
     assert len(t["rounds"]) == 3
@@ -77,7 +82,7 @@ def test_order_is_shuffled_by_the_seed():
         Stub.seen = []
         s, url = serve()
         try:
-            orders.append(tuple(ceremony.hold("t", SCRIPT, url,
+            orders.append(tuple(ceremony.hold("t", SCRIPT, SCRIPT_HASH, url,
                                               order_seed=seed)["questions_asked"]))
         finally:
             s.shutdown()
@@ -91,7 +96,7 @@ def test_an_empty_answer_is_retried_not_recorded_as_silence():
     Stub.empties = 1
     s, url = serve()
     try:
-        t = ceremony.hold("t", SCRIPT, url)
+        t = ceremony.hold("t", SCRIPT, SCRIPT_HASH, url)
     finally:
         s.shutdown()
         Stub.empties = 0
@@ -104,7 +109,7 @@ def test_the_sealed_piece_passes_the_seal_gate(tmp_path=None):
     Stub.seen = []
     s, url = serve()
     try:
-        t = ceremony.hold("THE TEACHINGS", SCRIPT, url, order_seed=2, sampling_seed=11)
+        t = ceremony.hold("THE TEACHINGS", SCRIPT, SCRIPT_HASH, url, order_seed=2, sampling_seed=11)
     finally:
         s.shutdown()
     with tempfile.TemporaryDirectory() as tmp:
@@ -112,8 +117,15 @@ def test_the_sealed_piece_passes_the_seal_gate(tmp_path=None):
         open(piece, "w").write(ceremony.seal_text(t))
         corpus = os.path.join(tmp, "corpus.md")
         open(corpus, "w").write("THE TEACHINGS")
+        script = os.path.join(tmp, "script.json")
+        open(script, "wb").write(SCRIPT_BYTES)
         assert seal.read_seal(piece).complete
-        assert not seal.verify(piece, corpus=corpus)
+        # Both files, not just the corpus. The script was the axis this test
+        # did not check, and it was the one that was broken: the sitting
+        # hashed a re-serialisation of the parsed script while the gate
+        # hashed the file, so `--script` could never pass for any piece the
+        # ceremony had ever sealed.
+        assert not seal.verify(piece, corpus=corpus, script=script)
 
 
 def test_the_sitting_will_not_seal_a_piece_it_cannot_make_again():
