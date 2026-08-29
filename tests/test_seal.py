@@ -147,3 +147,46 @@ def test_a_shape_also_cleans_a_value_an_alias_found(tmp_path):
                "question_seed": ["question seed"], "sampling_seed": ["sampling seed"],
                "date": {"aliases": ["date"], "format": "yyyy-MM-dd"}}
     assert read_seal(str(piece), profile).fields["date"] == "2026-08-29"
+
+
+def test_a_shape_it_cannot_read_is_refused_rather_than_compiled(tmp_path):
+    """`MMM dd, yyyy` consumes `MM` and leaves a literal `M`.
+
+    That compiles to a pattern matching nothing, so the field comes back
+    missing and the writer is told only that — with no way to see that
+    their shape was the problem. Same for `YYYY-MM-DD`, which is a common
+    way to write it and would look for the literal text "YYYY".
+    """
+    import pytest
+    from masterwork.seal import format_to_regex
+    for good in ("yyyy-MM-dd", "MM-dd-yyyy", "dd.MM.yyyy",
+                 "yyyy-MM-ddTHH:mm:ss"):
+        assert format_to_regex(good).startswith("(")
+    for bad in ("YYYY-MM-DD", "yyyy-M-d", "DD.MM.YYYY"):
+        with pytest.raises(ValueError) as e:
+            format_to_regex(bad)
+        assert "Supported" in str(e.value)
+
+
+def test_a_written_month_is_a_word_not_an_english_month_list(tmp_path):
+    """`dd MMMM yyyy` must read 29 Ağustos 2026 as readily as 29 August 2026.
+
+    The dialect mechanism exists so a workshop can keep its own headers,
+    and half the point of that is that they are not in English. A list of
+    month names would have read one and refused the other. A shape locates
+    a value; it does not validate one.
+    """
+    from masterwork.seal import read_seal
+    base = ("# corpus hash: a\n# script hash: b\n# question seed: 1\n"
+            "# sampling seed: 2\n# date: {}\n\ntext\n")
+    prof = {"corpus_hash": ["corpus hash"], "script_hash": ["script hash"],
+            "question_seed": ["question seed"], "sampling_seed": ["sampling seed"]}
+    for fmt, written, want in (
+            ("dd MMM yyyy", "sealed 29 Aug 2026", "29 Aug 2026"),
+            ("dd MMMM yyyy", "29 August 2026", "29 August 2026"),
+            ("dd MMMM yyyy", "muhurlendi 29 Ağustos 2026", "29 Ağustos 2026"),
+            ("dd MMM yyyy", "29 août 2026", "29 août 2026")):
+        piece = tmp_path / f"c-{abs(hash((fmt, written)))}.txt"
+        piece.write_text(base.format(written), encoding="utf-8")
+        pr = dict(prof, date={"aliases": ["date"], "format": fmt})
+        assert read_seal(str(piece), pr).fields["date"] == want

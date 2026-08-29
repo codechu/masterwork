@@ -108,9 +108,29 @@ def raw_header(path: str) -> str:
 # doubly escaped, which is how `(\\d{4}-\\d{2}-\\d{2})` ends up in a config
 # file as the illustration of a date. `pattern` is still there for a shape
 # this cannot express; it is the exception, not the way in.
-FORMAT_TOKENS = [("yyyy", r"\d{4}"), ("yy", r"\d{2}"), ("MM", r"\d{2}"),
+# Longest first: `MMMM` before `MMM` before `MM`, or the shorter token eats
+# the front of the longer one and leaves a literal behind.
+#
+# A written month is "a word where the month goes", not a list of English
+# month names. The dialect mechanism exists so a workshop can keep its own
+# headers, and half the point of that is that they are not in English — a
+# list would read `29 August 2026` and refuse `29 Ağustos 2026`. A shape
+# locates a value; it does not validate one, here or anywhere else.
+FORMAT_TOKENS = [("yyyy", r"\d{4}"), ("yy", r"\d{2}"),
+                 ("MMMM", r"[^\W\d_]+"), ("MMM", r"[^\W\d_]+"),
+                 ("MM", r"\d{2}"),
                  ("dd", r"\d{2}"), ("HH", r"\d{2}"), ("mm", r"\d{2}"),
                  ("ss", r"\d{2}")]
+
+
+# Letters that mean something in a shape. One of these left over after
+# tokenising is a shape the writer meant and this cannot read — `MMM dd,
+# yyyy` consumes `MM` and leaves a literal `M`, producing a pattern that
+# matches nothing and reports the field as missing, with nothing to say
+# why. Refusing names the mistake where it was made.
+# Case included: `YYYY-MM-DD` is a common way to write this and would
+# otherwise compile to a pattern matching the literal text "YYYY".
+TOKEN_LETTERS = set("yYMDdHhmsS")
 
 
 def format_to_regex(fmt: str) -> str:
@@ -123,6 +143,12 @@ def format_to_regex(fmt: str) -> str:
                 i += len(token)
                 break
         else:
+            if fmt[i] in TOKEN_LETTERS:
+                supported = ", ".join(t for t, _ in FORMAT_TOKENS)
+                raise ValueError(
+                    f"format {fmt!r}: {fmt[i]!r} at position {i} is left over "
+                    f"from a token this cannot read. Supported: {supported} "
+                    f"— a written month is MMM or MMMM.")
             out.append(re.escape(fmt[i]))
             i += 1
     return "(" + "".join(out) + ")"

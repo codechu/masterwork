@@ -62,11 +62,26 @@ notation you would use to describe a date, not as a regular expression:
 {"date": {"aliases": ["sealed"], "format": "yyyy-MM-dd"}}
 ```
 
-That reads `sealed on 2026-08-29 by the workshop` as `2026-08-29`. The
-tokens are `yyyy`, `yy`, `MM`, `dd`, `HH`, `mm`, `ss`; everything else is
-literal. A shape applies whether or not an alias matched — a header that
-has the key and wraps the value in prose is the common case, not the rare
-one.
+That reads `sealed on 2026-08-29 by the workshop` as `2026-08-29`.
+
+| token | reads |
+|---|---|
+| `yyyy` `yy` | a four- or two-digit year |
+| `MM` `dd` | a two-digit month or day |
+| `MMM` `MMMM` | a written month — **a word, in any language**: `Aug`, `August`, `Ağustos`, `août` |
+| `HH` `mm` `ss` | two-digit hour, minute, second |
+
+Everything else is literal, so `dd MMMM yyyy`, `MM-dd-yyyy` and
+`yyyy-MM-ddTHH:mm:ss` all say what they look like. A written month is not
+matched against a list of month names: the dialect mechanism exists so a
+workshop can keep its own headers, and half the point of that is that they
+are not in English.
+
+A shape applies whether or not an alias matched — a header that has the key
+and wraps the value in prose is the common case, not the rare one. A shape
+this cannot read is **refused** rather than compiled: `YYYY-MM-DD` would
+otherwise look for the literal text `YYYY`, find nothing, and report the
+field as missing with nothing to say about why.
 
 **`pattern` remains** for a shape `format` cannot express, and takes a
 regular expression. It is the exception; if you find yourself reaching for

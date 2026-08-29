@@ -21,6 +21,15 @@ loop has turned around and the work has started serving the instrument.
   run only as a rescue when no alias matched, so a header carrying the
   key and wrapping the value in prose could not be cleaned — which is the
   common case, not the rare one.
+- **A written month, in any language.** `dd MMM yyyy` and `dd MMMM yyyy`
+  read `29 Aug 2026`, `29 August 2026`, `29 Ağustos 2026` and `29 août
+  2026` alike — a word where the month goes, not a list of English month
+  names. A list would have served the language the dialect mechanism
+  exists to get away from.
+- **A shape it cannot read is refused rather than compiled.** `MMM dd,
+  yyyy` used to consume `MM` and leave a literal `M`, and `YYYY-MM-DD`
+  looked for the literal text `YYYY`; both produced a pattern matching
+  nothing, so the field came back missing with nothing to say about why.
 - The dialect documentation leads with the case that needs no shape at
   all: most of a dialect is just other names for the same fields.
 
