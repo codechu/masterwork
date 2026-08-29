@@ -83,6 +83,25 @@ Say what you ran and what came back; if it held, say that too. Prose in this
 repository states what the code cannot — why a refusal exists — so a change
 to behaviour usually means a change to a paragraph as well.
 
+### Commit messages
+
+This repository writes **incident prose**, not Conventional Commits.
+Nothing here derives a version or release notes from commit subjects, so
+the history is free to be read rather than parsed — and reading it is
+the point. Increasingly the reader is an agent deciding what to do next,
+and a type prefix plus a summary tells it nothing the diff did not.
+
+- The subject states the change as a sentence, present tense, no type
+  prefix.
+- The body names the incident: what went wrong, how it was noticed, and
+  what would have caught it. A change with no incident behind it says so
+  — this repository's changelog opens with that rule, and a guard with
+  no incident behind it is a guess.
+
+Both conventions are legitimate — see
+[Codechu STANDARDS §5.0](https://github.com/codechu/codechu-org/blob/main/STANDARDS.md#50-who-the-history-is-written-for)
+— but a repository picks one, and this one has picked.
+
 ## Status
 
 Not published, and not proven: no candidate has yet separated from the
