@@ -7,6 +7,23 @@ The rule this enforces: the tools are fed by failures met while doing real
 work. When a change can only cite a run staged to exercise the tool, the
 loop has turned around and the work has started serving the instrument.
 
+## Unreleased
+
+- **A seal profile describes a shape, not a regular expression.**
+  `{"date": {"format": "yyyy-MM-dd"}}` replaces
+  `(\\d{4}-\\d{2}-\\d{2})` as the way to say where a value sits in a
+  line. A profile is written by whoever keeps a workshop's seals, and
+  asking for a regex there — doubly escaped, because it lives in JSON —
+  asks them to learn our dialect and JSON's escaping to say something
+  they can already say. `pattern` remains for a shape the notation
+  cannot express.
+- **A shape now applies to a value an alias already found.** It used to
+  run only as a rescue when no alias matched, so a header carrying the
+  key and wrapping the value in prose could not be cleaned — which is the
+  common case, not the rare one.
+- The dialect documentation leads with the case that needs no shape at
+  all: most of a dialect is just other names for the same fields.
+
 ## 0.0.4 — 2026-08-29
 
 - **The starter corpus was not in the package.** The walkthrough said

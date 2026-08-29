@@ -50,7 +50,7 @@ and an entry may carry a regex for a field the seal never wrote as
 
 ```json
 {"corpus_hash": ["korpus md5"],
- "date": {"aliases": ["tarih"], "pattern": "(\\d{4}-\\d{2}-\\d{2})"}}
+ "date": {"aliases": ["tarih"], "format": "yyyy-MM-dd"}}
 ```
 
 A sealed file is its bytes. Teach the reader the dialect; do not edit the

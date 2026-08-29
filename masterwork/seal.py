@@ -102,17 +102,61 @@ def raw_header(path: str) -> str:
     return "".join(lines)
 
 
+# Shapes, in the notation a person writing a profile already knows. A
+# profile is written by whoever keeps a workshop's seals, not necessarily by
+# someone who writes regular expressions — and in JSON a regex arrives
+# doubly escaped, which is how `(\\d{4}-\\d{2}-\\d{2})` ends up in a config
+# file as the illustration of a date. `pattern` is still there for a shape
+# this cannot express; it is the exception, not the way in.
+FORMAT_TOKENS = [("yyyy", r"\d{4}"), ("yy", r"\d{2}"), ("MM", r"\d{2}"),
+                 ("dd", r"\d{2}"), ("HH", r"\d{2}"), ("mm", r"\d{2}"),
+                 ("ss", r"\d{2}")]
+
+
+def format_to_regex(fmt: str) -> str:
+    r"""`yyyy-MM-dd` -> `(\d{4}-\d{2}-\d{2})`. Everything else is literal."""
+    out, i = [], 0
+    while i < len(fmt):
+        for token, rx in FORMAT_TOKENS:
+            if fmt.startswith(token, i):
+                out.append(rx)
+                i += len(token)
+                break
+        else:
+            out.append(re.escape(fmt[i]))
+            i += 1
+    return "(" + "".join(out) + ")"
+
+
+def _extract(value: str, spec) -> str:
+    """Pull the shape out of a value that carries more than the value.
+
+    Applied to whatever an alias found, not only as a rescue when none did:
+    a header that has the key but writes `sealed on 2026-08-29` around the
+    value could not be cleaned when this ran as a fallback.
+    """
+    if not isinstance(spec, dict):
+        return value
+    rx = spec.get("pattern")
+    if not rx and spec.get("format"):
+        rx = format_to_regex(spec["format"])
+    if not rx:
+        return value
+    m = re.search(rx, value)
+    if not m:
+        return value
+    return (m.group(1) if m.groups() else m.group(0)).strip()
+
+
 def _lookup(canonical: str, spec, header: dict[str, str], raw: str):
-    """A profile entry is a list of aliases, or a dict that may add a pattern."""
+    """A profile entry is a list of aliases, or a dict that may add a shape."""
     aliases = spec if isinstance(spec, list) else (spec or {}).get("aliases", [])
     for alias in aliases:
         if alias.lower() in header:
-            return header[alias.lower()]
-    pattern = (spec or {}).get("pattern") if isinstance(spec, dict) else None
-    if pattern:
-        m = re.search(pattern, raw)
-        if m:
-            return (m.group(1) if m.groups() else m.group(0)).strip()
+            return _extract(header[alias.lower()], spec)
+    if isinstance(spec, dict) and (spec.get("pattern") or spec.get("format")):
+        found = _extract(raw, spec)
+        return found if found is not raw else None
     return None
 
 

@@ -109,3 +109,41 @@ def test_a_candidate_that_is_not_there_is_a_problem_not_a_traceback():
     """The line calls verify() directly, so the check belongs here."""
     assert seal.verify("/nowhere/candidate.txt") == [
         "no candidate at /nowhere/candidate.txt — nothing to verify"]
+
+
+def test_a_shape_is_written_the_way_a_person_writes_dates(tmp_path):
+    """`yyyy-MM-dd`, not a doubly-escaped regex in a JSON file.
+
+    A seal profile is written by whoever keeps a workshop's seals. Asking
+    for `(\\d{4}-\\d{2}-\\d{2})` there asks them to know our dialect and
+    JSON's escaping at once, to say a thing they can already say.
+    """
+    from masterwork.seal import format_to_regex, read_seal
+    assert format_to_regex("yyyy-MM-dd") == r"(\d{4}\-\d{2}\-\d{2})"
+
+    piece = tmp_path / "candidate.txt"
+    piece.write_text(
+        "# corpus hash: a\n# script hash: b\n# question seed: 1\n"
+        "# sampling seed: 2\n# sealed on 2026-08-29 by the workshop\n\ntext\n")
+    profile = {"corpus_hash": ["corpus hash"], "script_hash": ["script hash"],
+               "question_seed": ["question seed"], "sampling_seed": ["sampling seed"],
+               "date": {"aliases": [], "format": "yyyy-MM-dd"}}
+    assert read_seal(str(piece), profile).fields["date"] == "2026-08-29"
+
+
+def test_a_shape_also_cleans_a_value_an_alias_found(tmp_path):
+    """It used to run only when no alias matched.
+
+    A header with the key but a value wrapped in prose could not be
+    cleaned: the alias matched, returned the whole string, and the shape
+    never ran. That is the common case, not the rare one.
+    """
+    from masterwork.seal import read_seal
+    piece = tmp_path / "candidate.txt"
+    piece.write_text(
+        "# corpus hash: a\n# script hash: b\n# question seed: 1\n"
+        "# sampling seed: 2\n# date: sealed on 2026-08-29, unpriced\n\ntext\n")
+    profile = {"corpus_hash": ["corpus hash"], "script_hash": ["script hash"],
+               "question_seed": ["question seed"], "sampling_seed": ["sampling seed"],
+               "date": {"aliases": ["date"], "format": "yyyy-MM-dd"}}
+    assert read_seal(str(piece), profile).fields["date"] == "2026-08-29"

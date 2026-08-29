@@ -44,18 +44,34 @@ The sitting writes them itself:
 ## When the header is in another dialect
 
 A workshop that writes its own headers should not edit them to please the
-reader. Teach the reader the dialect instead:
+reader. Teach the reader the dialect instead.
+
+**Most of it is just names.** The defaults already accept `corpus md5` /
+`corpus hash`, `script md5` / `script hash`, `question seed` /
+`question order seed`, `sampling seed`, and `date` / `sealed`; a header in
+another language needs nothing but its own words:
 
 ```json
-{"corpus_hash": ["korpus md5"],
- "date": {"aliases": ["tarih"], "pattern": "(\\d{4}-\\d{2}-\\d{2})"}}
+{"corpus_hash": ["korpus md5"], "date": ["tarih"]}
 ```
 
-A value is either `key: value` on its own line, or — with `pattern` — pulled
-out of a line by a regex, for a seal that never wrote it as a pair. The
-defaults already accept `corpus md5` / `corpus hash`, `script md5` /
-`script hash`, `question seed` / `question order seed`, `sampling seed`,
-`date` / `sealed`.
+**When the value carries more than the value**, give its shape — in the
+notation you would use to describe a date, not as a regular expression:
+
+```json
+{"date": {"aliases": ["sealed"], "format": "yyyy-MM-dd"}}
+```
+
+That reads `sealed on 2026-08-29 by the workshop` as `2026-08-29`. The
+tokens are `yyyy`, `yy`, `MM`, `dd`, `HH`, `mm`, `ss`; everything else is
+literal. A shape applies whether or not an alias matched — a header that
+has the key and wraps the value in prose is the common case, not the rare
+one.
+
+**`pattern` remains** for a shape `format` cannot express, and takes a
+regular expression. It is the exception; if you find yourself reaching for
+it often, the shape notation is missing something and that is worth
+saying.
 
 **A sealed file is its bytes.** Changing them to satisfy the gate is the one
 repair that is never correct.
