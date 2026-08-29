@@ -258,6 +258,7 @@ the position — a masterwork is submitted, and it can be refused.
 | [`docs/gates.md`](docs/gates.md) | writing a threshold that can hold — start from [`gates/succession.md`](gates/succession.md) |
 | [`corpus/GROWING.md`](corpus/GROWING.md) | before writing a single tale — the shape is in [`corpus/starter/`](corpus/starter/) |
 | [`CHANGELOG.md`](CHANGELOG.md) | every entry names the incident that caused it |
+| [assets/README.md](assets/README.md) | you need a fifth image that matches the four |
 
 <details>
 <summary>Layout</summary>

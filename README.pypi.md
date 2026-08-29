@@ -258,6 +258,7 @@ the position — a masterwork is submitted, and it can be refused.
 | [`docs/gates.md`](https://github.com/codechu/masterwork/blob/v0.0.1/docs/gates.md) | writing a threshold that can hold — start from [`gates/succession.md`](https://github.com/codechu/masterwork/blob/v0.0.1/gates/succession.md) |
 | [`corpus/GROWING.md`](https://github.com/codechu/masterwork/blob/v0.0.1/corpus/GROWING.md) | before writing a single tale — the shape is in [`corpus/starter/`](https://github.com/codechu/masterwork/blob/v0.0.1/corpus/starter/) |
 | [`CHANGELOG.md`](https://github.com/codechu/masterwork/blob/v0.0.1/CHANGELOG.md) | every entry names the incident that caused it |
+| [assets/README.md](https://github.com/codechu/masterwork/blob/v0.0.1/assets/README.md) | you need a fifth image that matches the four |
 
 <details>
 <summary>Layout</summary>
