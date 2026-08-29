@@ -246,3 +246,19 @@ def test_the_labeller_runs_only_when_something_is_unlabelled():
         spec["label"]["command"] = "touch " + ran
         assert line_mod.Line(spec, os.path.join(tmp, "out")).run() == 0
         assert not os.path.exists(ran)
+
+
+def test_a_mistyped_spec_path_is_held_not_a_traceback():
+    """The first thing a new reader gets wrong must not answer with a stack trace."""
+    import pipeline.line as line_mod
+    assert line_mod.main(["/nowhere/at/all.json"]) == 4
+
+
+def test_a_spec_that_is_not_json_is_held():
+    import pipeline.line as line_mod
+    with tempfile.TemporaryDirectory() as tmp:
+        p = os.path.join(tmp, "spec.json")
+        open(p, "w").write("{ not json")
+        assert line_mod.main([p]) == 4
+        open(p, "w").write('["a list is not a spec"]')
+        assert line_mod.main([p]) == 4

@@ -84,7 +84,7 @@ house improving inside its own loop is a first-class way to use this.
 ## Where to start
 
 ```bash
-python -m pytest tests/ -q          # 80 tests, no network
+python -m pytest tests/ -q          # 83 tests, no network
 python -m pipeline.gate gates/      # check the frozen gate templates
 python examples/held_at_gate.py     # one run, end to end, no model needed
 ```

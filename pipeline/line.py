@@ -345,7 +345,23 @@ def main(argv=None) -> int:
     ap.add_argument("spec", help="run spec (JSON)")
     ap.add_argument("--out", default="runs", help="where the run record is written")
     a = ap.parse_args(argv)
-    spec = json.load(open(a.spec, encoding="utf-8"))
+    # The line's whole manner is to say what is missing and stop. A traceback
+    # here would be the first thing a new reader sees, on the first thing a
+    # new reader gets wrong — a mistyped path — and it would say the opposite
+    # of everything downstream of it.
+    if not os.path.exists(a.spec):
+        print(f"HELD: no run spec at {a.spec}\n"
+              f"      a spec is JSON; docs/run-spec.md documents every field, "
+              f"and examples/held_at_gate.py writes a working one")
+        return 4
+    try:
+        spec = json.load(open(a.spec, encoding="utf-8"))
+    except json.JSONDecodeError as e:
+        print(f"HELD: {a.spec} is not valid JSON — {e}")
+        return 4
+    if not isinstance(spec, dict):
+        print(f"HELD: {a.spec} holds a {type(spec).__name__}; a run spec is an object")
+        return 4
     out = os.path.join(a.out, spec.get("name", "run"))
     return Line(spec, out).run()
 

@@ -12,20 +12,24 @@ The gate here fails on purpose, and fails the way ours did: a threshold of
 wrong about the world, it was smaller than the noise it had to clear, so it
 could only read sampling. That is the refusal the line exists for.
 
+The record it writes is kept, under `runs/`, which version control ignores.
+A held run still persists — that is the point — so there is something to open
+afterwards.
+
     python examples/held_at_gate.py        # prints the trace, exits 1
+    cat runs/held-at-gate/run.json         # the record it held on
 """
 import hashlib
 import json
 import os
 import subprocess
 import sys
-import tempfile
 
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
 GATE = """# Succession gate (frozen before the run)
 
-## Does the candidate refuse a fabricated premise more often
+## Refusing a fabricated premise
 
     measure: adoption
     compare: candidate
@@ -83,7 +87,11 @@ def build(w: str) -> str:
 
 
 if __name__ == "__main__":
-    with tempfile.TemporaryDirectory() as w:
-        spec = build(w)
-        sys.exit(subprocess.call([sys.executable, "-m", "pipeline.line", spec,
-                                  "--out", f"{w}/runs"], cwd=ROOT))
+    work = os.path.join(ROOT, "runs", "_held-at-gate-fixture")
+    if os.path.exists(work):
+        import shutil
+        shutil.rmtree(work)
+    os.makedirs(work)
+    spec = build(work)
+    sys.exit(subprocess.call([sys.executable, "-m", "pipeline.line", spec,
+                              "--out", "runs"], cwd=ROOT))

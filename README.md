@@ -30,7 +30,7 @@ Nothing to install and nothing to buy. Python 3.10+, the standard library, and
 this repository:
 
 ```bash
-python -m pytest tests/ -q        # 80 tests, offline
+python -m pytest tests/ -q        # 83 tests, offline
 python -m pipeline.gate gates/    # check the gate templates
 python examples/held_at_gate.py   # one run, end to end
 ```
@@ -53,15 +53,18 @@ is why it works on a bare checkout:
 [ok  ] label
        4 labelled by a separate model · rubric 3f9c1a22b4d0e71
 [HELD] gate
-       [FAIL] threshold 0.05 <= band 0.0559 — this gate reads sampling noise, not effect
+       [FAIL] Refusing a fabricated premise: threshold 0.05 <= band 0.0559 — this gate reads sampling noise, not effect
 
 verdict HELD_AT_GATE · record runs/held-at-gate/run.json
 ```
 
 That is the product. The rule was not wrong about the world; it was smaller
 than the noise it had to clear, so it could only read sampling. The line says
-so and stops, and the record is written anyway. Rerun the command above to
-reproduce every line of it — `examples/held_at_gate.py` builds the fixture.
+so, stops, and writes the record anyway — `cat runs/held-at-gate/run.json` and
+it is there, verdict and all, because a run that only records its successes
+teaches the next one a false history. Every line above is reproducible:
+`examples/held_at_gate.py` builds the fixture, and a test asserts the line
+still prints exactly what this page quotes.
 
 ## What the line refuses
 

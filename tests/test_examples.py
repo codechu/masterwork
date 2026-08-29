@@ -21,8 +21,21 @@ def test_the_readme_trace_still_comes_out_of_the_line():
                    "4 labelled by a separate model",
                    "[HELD] gate",
                    "threshold 0.05 <= band 0.0559",
-                   "verdict HELD_AT_GATE"):
+                   "verdict HELD_AT_GATE · record runs/held-at-gate/run.json"):
         assert quoted in p.stdout, f"README quotes {quoted!r}; the line no longer prints it"
+    quoted_block = open(os.path.join(ROOT, "README.md"), encoding="utf-8").read()
+    for line in p.stdout.splitlines():
+        if line.strip():
+            assert line in quoted_block, f"the trace prints a line the README does not quote: {line!r}"
+
+
+def test_the_held_run_leaves_a_record_to_open():
+    """A held run persists; the README tells the reader to open it."""
+    subprocess.run([sys.executable, "examples/held_at_gate.py"], cwd=ROOT,
+                   capture_output=True)
+    import json
+    rec = json.load(open(os.path.join(ROOT, "runs", "held-at-gate", "run.json")))
+    assert rec["verdict"] == "HELD_AT_GATE"
 
 
 def test_the_example_needs_no_model_and_no_network():
