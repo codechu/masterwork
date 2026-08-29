@@ -280,3 +280,5 @@ runs/       local run directories (ignored — heavy and re-derivable)
 Contributing: [CONTRIBUTING.md](CONTRIBUTING.md) · Changelog:
 [CHANGELOG.md](CHANGELOG.md) · Licensed under the
 [Apache License 2.0](LICENSE).
+
+Part of [Codechu](https://github.com/codechu).

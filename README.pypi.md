@@ -280,3 +280,5 @@ runs/       local run directories (ignored — heavy and re-derivable)
 Contributing: [CONTRIBUTING.md](https://github.com/codechu/masterwork/blob/v0.0.1/CONTRIBUTING.md) · Changelog:
 [CHANGELOG.md](https://github.com/codechu/masterwork/blob/v0.0.1/CHANGELOG.md) · Licensed under the
 [Apache License 2.0](https://github.com/codechu/masterwork/blob/v0.0.1/LICENSE).
+
+Part of [Codechu](https://github.com/codechu).
