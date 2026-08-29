@@ -26,12 +26,18 @@ It ends `HELD_AT_GATE` and exits non-zero **on purpose**: it demonstrates a
 run the gate refused, because stopping is the thing this line is for. A tool
 that only showed you its happy path would be showing you the wrong thing.
 
-## 2. Read the two files you will start from
+## 2. Get the two files you will start from
+
+They ship inside the package, so this works whether or not you cloned:
 
 ```bash
-cat corpus/starter/tales.md      # three tales
-cat corpus/starter/script.json   # three questions, one per tale
+masterwork starter --to .
+cat tales.md      # three tales
+cat script.json   # three questions, one per tale
 ```
+
+It refuses to overwrite, so running it twice cannot eat a corpus you have
+begun editing.
 
 One question per tale, always. Read
 [`corpus/GROWING.md`](../corpus/GROWING.md) before you write a fourth of
@@ -43,7 +49,7 @@ You need an OpenAI-compatible endpoint serving whatever model you want the
 piece made from.
 
 ```bash
-masterwork ceremony corpus/starter/tales.md corpus/starter/script.json \
+masterwork ceremony tales.md script.json \
   --endpoint http://your-host:8080 \
   --out candidate.txt --transcript sitting.json \
   --order-seed 777 --sampling-seed 4242
@@ -68,7 +74,7 @@ See [`ceremony.md`](ceremony.md) for why the sitting has the shape it does.
 
 ```bash
 masterwork seal candidate.txt \
-  --corpus corpus/starter/tales.md --script corpus/starter/script.json
+  --corpus tales.md --script script.json
 ```
 
 ```

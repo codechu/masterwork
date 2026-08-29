@@ -45,9 +45,24 @@ def test_unknown_command_is_an_error():
 def test_every_stage_is_reachable_by_name():
     import importlib
     for name, (module, blurb) in mw.COMMANDS.items():
+        assert blurb, f"{name} has no help"
+        if module is None:            # handled in the dispatcher itself
+            assert hasattr(mw, name), f"{name} has no module and no handler"
+            continue
         m = importlib.import_module(module)
         assert hasattr(m, "main"), f"{name} -> {module} has no main()"
-        assert blurb, f"{name} has no help"
+
+
+def test_starter_writes_the_two_files_and_will_not_overwrite(tmp_path):
+    """A walkthrough that says `cat corpus/starter/tales.md` is only true
+    for someone who cloned. The files ship in the package so the installed
+    path can begin too."""
+    d = tmp_path / "here"
+    assert mw.starter(["--to", str(d)]) == 0
+    assert (d / "tales.md").read_text().strip()
+    assert (d / "script.json").read_text().strip()
+    # Refusing beats clobbering a corpus someone has started editing.
+    assert mw.starter(["--to", str(d)]) == 2
 
 
 def test_a_missing_judge_is_named_not_thrown():

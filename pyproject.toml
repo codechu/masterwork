@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "masterwork"
-version = "0.0.3"
+version = "0.0.4"
 description = "A production line for agent character: a sitting the model speaks for itself in, sealed candidates, frozen gates, and a verdict it is not allowed to give itself."
 readme = "README.pypi.md"
 requires-python = ">=3.10"
@@ -47,4 +47,4 @@ Contributing = "https://github.com/codechu/masterwork/blob/HEAD/CONTRIBUTING.md"
 packages = ["masterwork"]
 
 [tool.setuptools.package-data]
-masterwork = ["rubric-example.json"]
+masterwork = ["rubric-example.json", "starter/*"]

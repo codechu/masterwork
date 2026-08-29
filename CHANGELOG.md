@@ -7,6 +7,16 @@ The rule this enforces: the tools are fed by failures met while doing real
 work. When a change can only cite a run staged to exercise the tool, the
 loop has turned around and the work has started serving the instrument.
 
+## 0.0.4 — 2026-08-29
+
+- **The starter corpus was not in the package.** The walkthrough said
+  `cat corpus/starter/tales.md`, which is only true for someone who cloned
+  — and a starter corpus exists precisely so nobody has to write one before
+  they can begin. The two files now ship inside the package and
+  `masterwork starter --to .` writes them out; it refuses to overwrite, so
+  running it twice cannot eat a corpus someone has begun editing. Found by
+  installing from PyPI and following our own page.
+
 ## 0.0.3 — 2026-08-29
 
 - **`docs/first-run.md`** — the only page that is a path rather than a

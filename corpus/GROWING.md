@@ -1,6 +1,6 @@
 # Growing a corpus
 
-The starter ([`corpus/starter/tales.md`](starter/tales.md) and [`script.json`](starter/script.json)) is three tale-and-question pairs. It is not a small version of a
+The starter ([`masterwork/starter/tales.md`](starter/tales.md) and [`script.json`](starter/script.json)) is three tale-and-question pairs. It is not a small version of a
 working corpus; it is the shape of one. What follows is what a house needs to
 know to grow its own, which is the only kind that will fit it.
 

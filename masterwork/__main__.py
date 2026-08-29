@@ -17,6 +17,7 @@ from __future__ import annotations
 
 import argparse
 import importlib
+import pathlib
 import sys
 
 from masterwork import __version__
@@ -39,6 +40,7 @@ COMMANDS = {
     "pairs": ("masterwork.pairs", "cut training data from scored runs"),
     "retain": ("masterwork.retain", "run-directory retention"),
     "label": ("masterwork.blind_label", "blind-label cells for a judged axis"),
+    "starter": (None, "write out the starter corpus and its script"),
 }
 
 
@@ -59,6 +61,34 @@ def banner(version: str) -> str:
         "│" + space + TAGLINE + " " * (width - len(TAGLINE)) + space + "│",
         "└" + "─" * inner + "┘",
     ])
+
+
+def starter(argv) -> int:
+    """Write the starter corpus somewhere the reader can use it.
+
+    The two files ship inside the package because a walkthrough that says
+    `cat corpus/starter/tales.md` is only true for someone who cloned the
+    repository — and the whole point of a starter corpus is that nobody has
+    to write one before they can begin.
+    """
+    import argparse as _a
+    import shutil
+    ap = _a.ArgumentParser(prog="masterwork starter",
+                           description="write out the starter corpus and its script")
+    ap.add_argument("--to", default=".", help="directory to write into (default: here)")
+    a = ap.parse_args(argv)
+    src = pathlib.Path(__file__).resolve().parent / "starter"
+    dst = pathlib.Path(a.to)
+    dst.mkdir(parents=True, exist_ok=True)
+    for name in ("tales.md", "script.json"):
+        target = dst / name
+        if target.exists():
+            print(f"masterwork starter: {target} already exists — not overwriting",
+                  file=sys.stderr)
+            return 2
+        shutil.copyfile(src / name, target)
+        print(target)
+    return 0
 
 
 def build_parser() -> argparse.ArgumentParser:
@@ -104,6 +134,9 @@ def main(argv=None) -> int:
 
     if not quiet:
         print(banner(__version__), file=sys.stderr)
+
+    if cmd == "starter":
+        return starter(argv[at + 1:])
 
     module = importlib.import_module(COMMANDS[cmd][0])
     # The stage's parser takes its name from argv[0]; give it one a person

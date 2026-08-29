@@ -198,7 +198,7 @@ whose effect cannot be separated. That is
 [`corpus/GROWING.md`](corpus/GROWING.md), and it is the part that transfers.
 
 You do not get a corpus. Three pairs come with the repository in
-[`corpus/starter/`](corpus/starter/) so the machinery runs end to end and the
+[`masterwork/starter/`](masterwork/starter/) so the machinery runs end to end and the
 form is unambiguous; they are a beginning and they are meant to be outgrown.
 The corpus is the work, and it has to be yours: a tale is written from
 something **you** measured and got wrong, and a corpus assembled from someone
@@ -262,7 +262,7 @@ the position — a masterwork is submitted, and it can be refused.
 | [`docs/pairs.md`](docs/pairs.md) | turning a scored run into training data, and what a run leaves behind |
 | [`docs/campaigns.md`](docs/campaigns.md) | repeating an arm to measure a band, or comparing two arms against it |
 | [`docs/gates.md`](docs/gates.md) | writing a threshold that can hold — start from [`gates/succession.md`](gates/succession.md) |
-| [`corpus/GROWING.md`](corpus/GROWING.md) | before writing a single tale — the shape is in [`corpus/starter/`](corpus/starter/) |
+| [`corpus/GROWING.md`](corpus/GROWING.md) | before writing a single tale — the shape is in [`masterwork/starter/`](masterwork/starter/) |
 | [`CHANGELOG.md`](CHANGELOG.md) | every entry names the incident that caused it |
 | [assets/README.md](assets/README.md) | you need a fifth image that matches the four |
 
