@@ -7,7 +7,7 @@ The rule this enforces: the tools are fed by failures met while doing real
 work. When a change can only cite a run staged to exercise the tool, the
 loop has turned around and the work has started serving the instrument.
 
-## Unreleased
+## 0.0.1 — 2026-08-29
 
 - **Installable.** `pyproject.toml`, one top-level package, and a
   `masterwork` console script. The stages lived in top-level `pipeline/`
