@@ -229,3 +229,9 @@ Not published, and not proven. Publication needs a candidate that separates
 from the baseline through a frozen gate. As of today there is none: the best
 candidate sits behind the incumbent. The name is honest about that — a
 masterwork is submitted, and it can be refused.
+
+---
+
+Contributing: [CONTRIBUTING.md](CONTRIBUTING.md) · Changelog:
+[CHANGELOG.md](CHANGELOG.md) · Licensed under the
+[Apache License 2.0](LICENSE).
