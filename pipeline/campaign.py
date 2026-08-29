@@ -158,7 +158,14 @@ def main(argv=None) -> int:
     ap.add_argument("spec")
     ap.add_argument("--out", default="runs")
     a = ap.parse_args(argv)
-    spec = json.load(open(a.spec, encoding="utf-8"))
+    if not os.path.exists(a.spec):
+        print(f"HELD: no campaign spec at {a.spec} — see docs/campaigns.md")
+        return 4
+    try:
+        spec = json.load(open(a.spec, encoding="utf-8"))
+    except json.JSONDecodeError as e:
+        print(f"HELD: {a.spec} is not valid JSON — {e}")
+        return 4
     return Campaign(spec, os.path.join(a.out, spec.get("name", "campaign"))).run()
 
 

@@ -1,8 +1,8 @@
 <p align="center"><img src="assets/banner.jpg" alt="A craftsman slides a sealed folio across his bench onto the guild's empty judging table; earlier pieces stand turned to the wall behind him." width="100%"></p>
 
-# masterwork
+# Masterwork
 
-![python](https://img.shields.io/badge/python-3.10%2B-blue) [![license](https://img.shields.io/badge/license-Apache--2.0-blue)](LICENSE) ![dependencies](https://img.shields.io/badge/dependencies-0-brightgreen) ![status](https://img.shields.io/badge/status-not%20published-lightgrey)
+[![python](https://img.shields.io/badge/python-3.10%2B-blue)](#run-it) [![license](https://img.shields.io/badge/license-Apache--2.0-blue)](LICENSE) [![dependencies](https://img.shields.io/badge/dependencies-0-brightgreen)](CONTRIBUTING.md#ground-rules) [![status](https://img.shields.io/badge/status-not%20published-lightgrey)](#status)
 
 *Makes a character for a model. Does not score it.*
 
@@ -264,7 +264,7 @@ runs/       local run directories (ignored — heavy and re-derivable)
 
 ---
 
-<p align="center"><img src="assets/icon.jpg" alt="Masterwork guild seal — a struck M hallmark inside a rope ring" width="96"></p>
+<p align="center"><img src="assets/icon.png" alt="Masterwork guild seal — a struck M hallmark inside a rope ring" width="96"></p>
 
 Contributing: [CONTRIBUTING.md](CONTRIBUTING.md) · Changelog:
 [CHANGELOG.md](CHANGELOG.md) · Licensed under the

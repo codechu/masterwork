@@ -216,8 +216,18 @@ def main(argv=None) -> int:
             aliases[k] = list(v) + aliases.get(k, [])
     files = []
     for p in a.paths:
-        files.extend(sorted(glob.glob(os.path.join(p, "**", "*.md"), recursive=True))
-                     if os.path.isdir(p) else [p])
+        if os.path.isdir(p):
+            files.extend(sorted(glob.glob(os.path.join(p, "**", "*.md"),
+                                          recursive=True)))
+        elif os.path.exists(p):
+            files.append(p)
+        else:
+            print(f"HELD: no gate file or directory at {p}")
+            return 1
+    if not files:
+        print(f"HELD: no gate files under {', '.join(a.paths)} — a gate is a "
+              f"markdown file; gates/example.md is the smallest one")
+        return 1
 
     tally: dict[str, int] = {}
     for path in files:

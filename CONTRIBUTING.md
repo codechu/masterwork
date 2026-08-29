@@ -88,5 +88,5 @@ to behaviour usually means a change to a paragraph as well.
 Not published, and not proven: no candidate has yet separated from the
 incumbent through a frozen gate. That is stated here rather than discovered
 later. If you are here to use the line rather than improve it, read the
-"Using this badly" section of the [README](README.md) first — a tool that
+[Failure modes](README.md#failure-modes) section of the README first — a tool that
 produces the appearance of rigour is worse than no tool, and this one can.

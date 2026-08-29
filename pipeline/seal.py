@@ -177,6 +177,12 @@ def main(argv=None) -> int:
     ap.add_argument("--deployed", help="the copy that will actually be run")
     ap.add_argument("--profile", help="JSON map {canonical: [header aliases]}")
     a = ap.parse_args(argv)
+    missing = [x for x in (a.identity, getattr(a, "corpus", None),
+                           getattr(a, "script", None), getattr(a, "deployed", None))
+               if x and not os.path.exists(x)]
+    if missing:
+        print("HELD: " + " · ".join(f"no file at {m}" for m in missing))
+        return 1
 
     profile = json.load(open(a.profile, encoding="utf-8")) if a.profile else None
     problems = verify(a.identity, profile, a.corpus, a.script, a.deployed)
