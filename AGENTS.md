@@ -43,6 +43,7 @@ for scoring, and applies a decision rule that was written before the run.
 | `HELD_FOR_LABELLING` | labels are missing, empty, or written for an older version of a cell | get them with `tools/blind_label.py`; the line is waiting, not broken |
 | `HELD_AT_MEASUREMENT` | the benchmark says the score is not comparable | judge from a separate endpoint, or declare and keep the stamp |
 | `HELD_AT_GATE` | a threshold sits inside its own noise | the gate is void; measure the band, write a new gate |
+| `HELD_WITHOUT_MEASUREMENT` | a rule names an axis and nothing measured it | judge with the benchmark, or declare the run diagnostic — a gate that was checked is not a gate that was applied |
 | `NEEDS_SIGNATURE` | a band could not be verified, or a rule names no axis | a human decides; do not decide for them |
 | `UNRESOLVED` | the difference is smaller than the gate can resolve | this is **not** "no difference" — report the size needed to settle it |
 | `DIAGNOSTIC` | the run was declared diagnostic | no acceptance verdict may be drawn from it |
@@ -84,7 +85,7 @@ house improving inside its own loop is a first-class way to use this.
 ## Where to start
 
 ```bash
-python -m pytest tests/ -q          # 83 tests, no network
+python -m pytest tests/ -q          # 91 tests, no network
 python -m pipeline.gate gates/      # check the frozen gate templates
 python examples/held_at_gate.py     # one run, end to end, no model needed
 ```

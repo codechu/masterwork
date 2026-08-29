@@ -37,8 +37,14 @@ class Cell:
     path: str
     steps: int
     closing: int
+    unreadable: str | None = None
 
     def problem(self, min_steps: int, need_closing: bool) -> str | None:
+        # Unconditional: a file that would not parse is not a cell, whatever
+        # the thresholds are. With min_steps 0 and closing optional — a
+        # legitimate configuration — a truncated file used to count as complete.
+        if self.unreadable:
+            return f"could not be read ({self.unreadable})"
         if self.steps < min_steps:
             return f"transcript too short ({self.steps} < {min_steps})"
         if need_closing and self.closing == 0:
@@ -47,17 +53,28 @@ class Cell:
 
 
 def read_cell(path: str, transcript_key: str, closing_key: str) -> Cell:
+    name = os.path.splitext(os.path.basename(path))[0]
     try:
         d = json.load(open(path, encoding="utf-8"))
     except Exception as e:
-        return Cell(os.path.basename(path), path, 0, 0)
+        # Named the same way as a readable cell: the stem. Naming it with the
+        # extension made one corrupt file report as INCOMPLETE and ABSENT at
+        # once, which tells an operator two different stories about it.
+        return Cell(name, path, 0, 0, unreadable=f"{type(e).__name__}: {e}")
     steps = len(d.get(transcript_key) or [])
     closing = len((d.get(closing_key) or "").strip())
-    return Cell(os.path.splitext(os.path.basename(path))[0], path, steps, closing)
+    return Cell(name, path, steps, closing)
 
 
 def inspect(pattern: str, expected: list[str] | None, min_steps: int,
             need_closing: bool, transcript_key: str, closing_key: str):
+    """Cells found, the broken ones with why, and the expected ones absent.
+
+    A pattern that matches nothing is the caller's problem, not an empty grid:
+    with no expected list there is nothing to be short of, so zero cells used
+    to read as a complete grid and the gate passed. A mistyped pattern in a
+    spec is the ordinary way to arrive there.
+    """
     cells = [read_cell(p, transcript_key, closing_key)
              for p in sorted(glob.glob(pattern))]
     by_name = {c.name: c for c in cells}
@@ -98,6 +115,12 @@ def main(argv=None) -> int:
         print(f"  INCOMPLETE {c.name}: {why}")
     for n in absent:
         print(f"  ABSENT     {n}")
+
+    if not cells:
+        print(f"\nHELD: no cells matched {a.pattern!r}. An empty grid is not a "
+              f"complete one — check the pattern, and quote it so the shell "
+              f"does not expand it.")
+        return 1
 
     short = want - good
     if short <= 0:

@@ -30,7 +30,7 @@ Nothing to install and nothing to buy. Python 3.10+, the standard library, and
 this repository:
 
 ```bash
-python -m pytest tests/ -q        # 83 tests, offline
+python -m pytest tests/ -q        # 91 tests, offline
 python -m pipeline.gate gates/    # check the gate templates
 python examples/held_at_gate.py   # one run, end to end
 ```
@@ -81,6 +81,7 @@ record, and exits in a way that says *waiting*, not *broken*.
 | `HELD_FOR_LABELLING` | labels are missing, empty, or written for an older version of a cell | get them with [`tools/blind_label.py`](tools/blind_label.py); the line is waiting, not broken |
 | `HELD_AT_MEASUREMENT` | the benchmark says the score is not comparable | judge from a separate endpoint, or declare and keep the stamp |
 | `HELD_AT_GATE` | a threshold sits inside its own noise | the gate is void; measure the band, write a new gate |
+| `HELD_WITHOUT_MEASUREMENT` | a rule names an axis and nothing measured it | judge with the benchmark, or declare the run diagnostic — a gate that was checked is not a gate that was applied |
 | `NEEDS_SIGNATURE` | a band could not be verified, or a rule names no axis | a human decides; do not decide for them |
 | `UNRESOLVED` | the difference is smaller than the gate can resolve | this is **not** "no difference" — report the size needed to settle it |
 | `DIAGNOSTIC` | the run was declared diagnostic | no acceptance verdict may be drawn from it |

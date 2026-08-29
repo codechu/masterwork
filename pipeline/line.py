@@ -216,6 +216,13 @@ class Line:
                 not c.get("closing_optional", False),
                 c.get("transcript_key", "messages"),
                 c.get("closing_key", "final_text"))
+            if not found:
+                self.stage("completeness", False, [
+                    f"no cells matched {c['pattern']!r}",
+                    "an empty grid is not a complete one — a mistyped pattern "
+                    "reaches this gate looking like a finished run"])
+                self.persist("HELD_AT_COMPLETENESS")
+                return 1
             want = len(expected) if expected else len(found)
             short = want - (len(found) - len(broken))
             allowed = c.get("allow_missing", 0)
@@ -324,6 +331,21 @@ class Line:
             if unsure:
                 self.persist("NEEDS_SIGNATURE")
                 return 2
+            # Last, because a void gate and an unbound rule are more specific
+            # complaints. A rule that names an axis and met no measurement was
+            # never applied: the section validates and prints PASS, which reads
+            # as "the gate held", and the run used to fall through to COMPLETE
+            # with rc 0 carrying no verdict at all.
+            named = [t2 for t2, body in gate_check.sections(text)
+                     if gate_check.field(body, "measure")]
+            if named and not measured:
+                self.stage("gate applied", False, [
+                    f"{len(named)} rule(s) name an axis and nothing measured it: "
+                    + ", ".join(named),
+                    "judge with the benchmark, or declare the run diagnostic — "
+                    "a gate that was checked is not a gate that was applied"])
+                self.persist("HELD_WITHOUT_MEASUREMENT")
+                return 3
             if verdicts:
                 self.record["axis_verdicts"] = [
                     {"gate": t2, "verdict": v} for t2, v in verdicts]

@@ -114,3 +114,16 @@ def test_the_sealed_piece_passes_the_seal_gate(tmp_path=None):
         open(corpus, "w").write("THE TEACHINGS")
         assert seal.read_seal(piece).complete
         assert not seal.verify(piece, corpus=corpus)
+
+
+def test_the_sitting_will_not_seal_a_piece_it_cannot_make_again():
+    """An unset seed formatted into a header writes the word "None", which
+    looks like a value. The refusal belongs where the mark is struck."""
+    import pytest
+    base = {"name": "X", "corpus_hash": "a" * 32, "script_hash": "b" * 32,
+            "order_seed": 1, "sampling_seed": 2718, "date": "2026-08-29",
+            "text": "words"}
+    assert "sampling seed: 2718" in ceremony.seal_text(base)
+    for field in ("corpus_hash", "order_seed", "sampling_seed", "date"):
+        with pytest.raises(ValueError, match=field):
+            ceremony.seal_text({**base, field: None})

@@ -33,7 +33,8 @@ GATE_INSIDE_BAND = GATE_OK.replace("threshold: 0.33 — above the band",
                                    "threshold: 0.10 — above the band")
 
 
-def build(tmp, gate_text=GATE_OK, closing="done", cells_n=2):
+
+def build(tmp, gate_text=GATE_OK, closing="done", cells_n=2, gate=True):
     corpus = os.path.join(tmp, "corpus.md")
     open(corpus, "w").write("tales")
     from pipeline import seal
@@ -55,18 +56,36 @@ def build(tmp, gate_text=GATE_OK, closing="done", cells_n=2):
         "generate": {"command": "true"},
         "cells": {"pattern": os.path.join(cells_dir, "*.json")},
         "judge": {"command": "true"},
-        "gate": {"file": gate_file},
+        # Stage-order tests pass gate=False. A well-formed gate names an axis,
+        # and a named axis with nothing measured now holds the run — correctly,
+        # but it would mask what those tests are actually about.
+        **({"gate": {"file": gate_file}} if gate else {}),
     }
 
 
 def test_clean_run_completes_and_records():
     with tempfile.TemporaryDirectory() as tmp:
-        line = Line(build(tmp), os.path.join(tmp, "out"))
+        line = Line(build(tmp, gate=False), os.path.join(tmp, "out"))
         assert line.run() == 0
         rec = json.load(open(os.path.join(tmp, "out", "run.json")))
         assert rec["verdict"] == "COMPLETE"
         assert [s["stage"] for s in rec["stages"]] == \
-            ["purpose", "seal", "generate", "completeness", "judge", "gate"]
+            ["purpose", "seal", "generate", "completeness", "judge"]
+
+
+def test_a_gate_nobody_measured_does_not_come_back_complete():
+    """The section validates and prints PASS. That is not the gate holding.
+
+    A spec with a gate naming an axis and a judge that produces no measurement
+    used to fall through to COMPLETE with rc 0 and no verdict recorded — the
+    operator reads PASS and COMPLETE and concludes the candidate cleared it.
+    """
+    with tempfile.TemporaryDirectory() as tmp:
+        line = Line(build(tmp), os.path.join(tmp, "out"))
+        assert line.run() == 3
+        rec = json.load(open(os.path.join(tmp, "out", "run.json")))
+        assert rec["verdict"] == "HELD_WITHOUT_MEASUREMENT"
+        assert "axis_verdicts" not in rec
 
 
 def test_stale_deployed_copy_stops_before_generating():
@@ -124,7 +143,7 @@ def test_self_judged_measurement_never_reaches_the_gate():
 
 
 def _labelled_spec(tmp, labels):
-    spec = build(tmp)
+    spec = build(tmp, gate=False)
     cells_dir = os.path.dirname(spec["cells"]["pattern"])
     lab_dir = os.path.join(tmp, "labels")
     os.makedirs(lab_dir, exist_ok=True)

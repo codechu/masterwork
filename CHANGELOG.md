@@ -56,6 +56,38 @@ loop has turned around and the work has started serving the instrument.
   nothing when it passed, so who labelled, against which rubric, and whether
   the labels had been replaced never reached the record.
 
+### The line — six holes an adversarial read of the code found
+- **A seed written as the word "None" counted as a seed.** The sitting formats
+  its header with f-strings, so an unset sampling seed arrived at the seal
+  reader as four characters that look like a value. A candidate whose sampling
+  was never pinned cleared the one gate that exists to say it cannot be made
+  again. Placeholders are missing values now, and the sitting refuses to strike
+  a mark it cannot reproduce.
+- **The self-judged refusal read a field the benchmark never writes.** It
+  looked for `judge: "SELF"` on each cell's seal; a cell's seal is built before
+  judging and carries the agent's definition only, while the stamp lives at the
+  top of `report.json`. The check could not fire, so pairs cut from a fully
+  self-judged run came out looking like pairs cut from a judged one. The test
+  that "covered" it invented the shape it was testing.
+- **A gate nobody measured came back COMPLETE.** With a gate naming an axis and
+  no measurement to bind it to, every section still validated and printed
+  `PASS`, and the run exited 0 with no verdict recorded — which an operator
+  reads as the candidate having cleared it. Now `HELD_WITHOUT_MEASUREMENT`.
+- **A missing candidate file crashed inside the seal gate**, and crashed before
+  anything was persisted, breaking the line's other promise: it records on
+  failure too.
+- **A corrupt cell counted as a complete one** when the thresholds were relaxed
+  (`min_steps` 0, closing optional — a legitimate configuration). Unparseable
+  is now broken regardless of thresholds. The same file also reported as
+  INCOMPLETE and ABSENT at once, telling an operator two stories about itself.
+- **An empty grid read as a complete grid.** A cells pattern matching nothing
+  had nothing to be short of, so a mistyped pattern reached the gate looking
+  like a finished run.
+
+Found by a review that checked masterwork's assumptions against journeyman's
+actual source rather than against masterwork's own fixtures — which is how the
+first two surfaced, since both tests passed against shapes that do not exist.
+
 ### Measurement
 - **Endpoint normalisation.** An endpoint given as `.../v1` became
   `.../v1/v1/chat/completions`; every cell returned 404 and the run completed

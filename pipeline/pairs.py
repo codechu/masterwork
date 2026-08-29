@@ -37,6 +37,26 @@ import os
 import sys
 
 
+def run_is_self_judged(run_dir: str) -> bool | None:
+    """Read the benchmark's own stamp, from where it actually writes it.
+
+    The refusal used to look for `seal.judge == "SELF"` on each cell. The
+    benchmark never writes that: a cell's seal is built once, before judging,
+    and carries the agent's definition only — the self_judged stamp lives at
+    the top of report.json. So the check could not fire, and pairs cut from a
+    fully self-judged run came out looking like pairs cut from a judged one.
+
+    None means no report was found, which is not the same as False.
+    """
+    for p in sorted(glob.glob(os.path.join(run_dir, "**", "report.json"),
+                              recursive=True)):
+        try:
+            return bool(json.load(open(p, encoding="utf-8")).get("self_judged"))
+        except Exception:
+            continue
+    return None
+
+
 def load_cells(run_dir: str) -> list[dict]:
     out = []
     for p in sorted(glob.glob(os.path.join(run_dir, "**", "cells", "*.json"),
@@ -75,8 +95,6 @@ def usable(cell: dict, allow_self_judged: bool) -> str | None:
         return f"invalid cell ({cell.get('invalid_reason')})"
     if not cell.get("messages"):
         return "no transcript"
-    if not allow_self_judged and (cell.get("seal") or {}).get("judge") == "SELF":
-        return "self-judged"
     return None
 
 
@@ -193,6 +211,21 @@ def main(argv=None) -> int:
     if not cells:
         print(f"no cells under {a.run_dir}")
         return 1
+
+    # A run-level fact, refused at run level. Cutting pairs from a run the
+    # benchmark itself marked incomparable trains the model on its own opinion
+    # of itself, and the resulting file looks exactly like a good one.
+    self_judged = run_is_self_judged(a.run_dir)
+    if self_judged and not a.allow_self_judged:
+        print(f"HELD: {a.run_dir} was judged by the agent's own endpoint "
+              f"(report.json says self_judged). The label would be the agent's "
+              f"opinion of itself. Pass --allow-self-judged to say you meant it, "
+              f"and record that you did.")
+        return 1
+    if self_judged is None:
+        print("  note: no report.json under this run directory, so the "
+              "self-judged stamp could not be read. It is not absent, it is "
+              "unchecked.")
     if a.sft:
         rows = winners(cells, a.axis, a.floor, a.strip_system, a.allow_self_judged)
         notes = []

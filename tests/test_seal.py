@@ -89,3 +89,23 @@ def test_pattern_recovers_a_field_that_is_not_key_value():
         s = seal.read_seal(p, profile)
         assert s.complete, s.missing
         assert s.fields["date"] == "2026-08-26"
+
+
+def test_a_seed_written_as_the_word_None_is_missing_not_present():
+    """The ceremony formats its header with f-strings; an unset sampling seed
+    used to arrive as the four-character string "None" and count as supplied —
+    a candidate whose sampling was never pinned clearing the one gate that
+    exists to say it cannot be made again."""
+    with tempfile.TemporaryDirectory() as tmp:
+        p = os.path.join(tmp, "candidate.txt")
+        open(p, "w").write(
+            "# corpus hash: " + "a" * 32 + "\n# script hash: " + "b" * 32 +
+            "\n# question seed: 1 · sampling seed: None\n# date: 2026-08-29\n\nwords\n")
+        s = seal.read_seal(p)
+        assert "sampling_seed" in s.missing and not s.complete
+
+
+def test_a_candidate_that_is_not_there_is_a_problem_not_a_traceback():
+    """The line calls verify() directly, so the check belongs here."""
+    assert seal.verify("/nowhere/candidate.txt") == [
+        "no candidate at /nowhere/candidate.txt — nothing to verify"]

@@ -52,6 +52,8 @@ DEFAULT_PROFILE: dict[str, list[str]] = {
 
 HEADER_LINE = re.compile(r"^#\s*([^:·]+?)\s*:\s*(.+?)\s*$")
 HASH = re.compile(r"\b[0-9a-f]{32}\b")
+# What a header says when a value was never supplied.
+PLACEHOLDERS = {"none", "null", "nil", "-", "n/a", "na", "(unset)", ""}
 
 
 def file_hash(path: str) -> str:
@@ -120,6 +122,13 @@ def read_seal(path: str, profile: dict | None = None) -> Seal:
     fields, missing = {}, []
     for canonical in REQUIRED:
         value = _lookup(canonical, profile.get(canonical), header, raw)
+        # A field written as "None" is a field nobody supplied. The ceremony
+        # formats its header with f-strings, so an unset sampling seed used to
+        # arrive here as the four-character string "None" and count as present
+        # — a candidate whose sampling was never pinned passing the one gate
+        # that exists to say it cannot be made again.
+        if value is not None and value.strip().lower() in PLACEHOLDERS:
+            value = None
         if value is None:
             missing.append(canonical)
         else:
@@ -134,6 +143,11 @@ def verify(identity: str, profile=None, corpus=None, script=None,
            deployed=None) -> list[str]:
     """Return the problems found. Empty list means the piece may be run."""
     problems: list[str] = []
+    # Checked here rather than by each caller: the line reaches verify()
+    # directly, and a traceback from inside a gate is the one thing this
+    # module promises never to produce.
+    if not os.path.exists(identity):
+        return [f"no candidate at {identity} — nothing to verify"]
     seal = read_seal(identity, profile)
     if seal.missing:
         problems.append(

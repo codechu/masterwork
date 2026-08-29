@@ -142,7 +142,17 @@ def hold(corpus: str, script: dict, endpoint: str, model: str | None = None,
 
 
 def seal_text(transcript: dict, script_hash: str | None = None) -> str:
-    """The piece plus its maker's mark, in the shape the seal reader expects."""
+    """The piece plus its maker's mark, in the shape the seal reader expects.
+
+    Refuses to stamp a mark it cannot make again. Formatting an absent seed
+    into the header writes the word "None", which looks like a value.
+    """
+    for field in ("corpus_hash", "order_seed", "sampling_seed", "date"):
+        if transcript.get(field) in (None, ""):
+            raise ValueError(
+                f"cannot seal: {field} is unset. Two candidates from one corpus "
+                f"that differ only by sampling seed are different candidates, "
+                f"so a piece made without one cannot be made again.")
     return (
         "# masterwork seal\n"
         f"# name: {transcript.get('name') or '(unnamed)'}\n"
