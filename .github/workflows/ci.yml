@@ -13,7 +13,17 @@ jobs:
         with: {python-version: "${{ matrix.python }}"}
       - run: python -m pip install pytest
       # The offline proof first: it is what the README opens with, and a
-      # reader who cannot run it has no reason to believe the rest.
-      - run: python examples/held_at_gate.py
+      # reader who cannot run it has no reason to believe the rest. It exits
+      # 1 BY DESIGN — the run it demonstrates is one the gate held, and
+      # stopping is the feature. A step that expected success here failed
+      # the whole matrix on a correct example.
+      - name: the offline proof holds, as it is meant to
+        run: |
+          set +e
+          out=$(python examples/held_at_gate.py); rc=$?
+          echo "$out"
+          echo "$out" | grep -q "HELD_AT_GATE" \
+            || { echo "expected a held verdict"; exit 1; }
+          [ "$rc" -ne 0 ] || { echo "a held run must not exit 0"; exit 1; }
       - run: python -m masterwork gate gates/
       - run: python -m pytest tests/ -q
