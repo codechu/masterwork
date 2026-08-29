@@ -99,7 +99,12 @@ with the install, and carries the verdict — so scoring needs two things you
 supply:
 
 - **an endpoint running the agent under test**, with your candidate as its
-  system text;
+  system text — the thing that actually serves your agent, not the inference
+  server underneath it. If a harness adds the tools and the loop, the harness
+  is the agent; pointing past it measures the bare model instead, and the run
+  will look completely normal while doing so. A harness that exposes
+  `/v1/chat/completions` without `/v1/models` needs the model named
+  explicitly in the spec;
 - **a judge that has passed journeyman's calibration exam.** `journeyman
   qualify` grants or refuses the badge; the registry of who passed and who
   failed ships with it. A run judged by an unqualified judge, or by the agent

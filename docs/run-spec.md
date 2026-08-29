@@ -149,6 +149,22 @@ line puts it on the verdict, next to `allow_self_judged`.
 }
 ```
 
+**Point it at what actually serves your agent, not at the model
+underneath.** If a harness sits in front of the model — adding the system
+text, the tools, the loop — then the harness is the agent, and measuring the
+model directly measures something else that happens to share weights. It is
+an easy mistake because both speak the same protocol and both answer.
+*Incident: this house's first real campaign went straight to the inference
+server, past the harness its agent runs behind. Eighteen of twenty-four cells
+came back with no closing report and the profile was near zero — numbers that
+say nothing about the agent, produced by a run that looked entirely
+ordinary.* The house's own record already said that path was invalid for a
+character measurement; the spec did not.
+
+`model` is optional only where the endpoint can be asked. A harness often
+exposes `/v1/chat/completions` without `/v1/models` — name the model
+explicitly there, or discovery fails on an endpoint that works.
+
 Endpoints are normalised: the benchmark appends `/v1/chat/completions`
 itself, so a URL already ending in `/v1` would 404 every cell — and a run of
 404s completes and reports nothing. Before spending a battery, the endpoint
