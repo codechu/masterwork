@@ -60,11 +60,17 @@ jobs:
             echo "::warning::a release for $GITHUB_REF_NAME already exists;" \
                  "leaving its notes alone rather than overwriting them"
           else
-            # Pre-1.0 carries no stability promise, so the release says so
-            # rather than leaving a reader to infer it from the number. Set
-            # by the version, not by hand: marking one release and forgetting
-            # the next is worse than marking none. It stops at 1.0 on its own.
-            case "$v" in 0.*) pre="--prerelease" ;; *) pre="" ;; esac
+            # Marked pre-release only when the version actually is one
+            # (0.3.0rc1, 1.0.0b2). Not for 0.x: GitHub reads the flag as
+            # "not for general use", and we tell people to install 0.x —
+            # so on a plain 0.x it says the wrong thing, and it costs the
+            # repository its "latest release" entirely, since GitHub never
+            # treats a pre-release as latest. Pre-1.0 is already said twice
+            # and more precisely: by the version and by ## Status.
+            case "$v" in
+              *[0-9].[0-9]*[!0-9.]*) pre="--prerelease" ;;
+              *) pre="" ;;
+            esac
             gh release create "$GITHUB_REF_NAME" --title "$GITHUB_REF_NAME" \
               --verify-tag $pre --notes-file /tmp/notes.md
           fi
