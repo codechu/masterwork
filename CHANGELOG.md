@@ -26,6 +26,23 @@ loop has turned around and the work has started serving the instrument.
 - **Labelling hold.** Labelling is deliberately outside the house. Waiting is
   a state, not a failure.
 
+### Labelling
+- **Blind labelling has an instrument.** A deterministic criterion once
+  collapsed "offered the material" and "named the material as evidence and
+  refused" into one class: twenty of twenty cells read as violations, and
+  under blind labels the same cells came back thirteen and seven. The line
+  held for labels but left producing them to whoever was waiting, which is
+  where the discipline was being lost.
+- **The telling part of a filename.** Checking a whole cell name back out of
+  the rendered prompt looked like a guard and was not: cells are named
+  `<arm>_s<seed>`, so the arm alone walks through. Caught by a test written
+  against the guard rather than by the guard. Names are now split into words,
+  and only the ones that some cells carry and others do not are treated as
+  identifying.
+- **Relabelling is not free.** Labelling again after the key is open is how a
+  result gets chosen rather than measured, so it takes a flag and the flag
+  lands on every label written.
+
 ### Measurement
 - **Endpoint normalisation.** An endpoint given as `.../v1` became
   `.../v1/v1/chat/completions`; every cell returned 404 and the run completed
@@ -60,3 +77,9 @@ loop has turned around and the work has started serving the instrument.
 - Heavy artefacts stay local and disposable; the kilobyte evidence is
   archived on purpose. Prompted by a benchmark whose whole run archive is
   under a megabyte, and by the opposite habit being easy to fall into.
+
+### The repository
+- **Licence and contributing guide.** Apache 2.0, matching the benchmark this
+  line submits to. The guide says what will be refused as loudly as what is
+  welcome — prompted by a sibling repository that invited pull requests while
+  a one-way sync quietly deleted every outside contribution.
