@@ -71,16 +71,39 @@ house improving inside its own loop is a first-class way to use this.
 
 ## Vocabulary
 
-- **piece** — the sealed identity file; what the model wrote about itself.
+Ordered by how often the word carries a sentence here, not by importance.
+
+- **gate** — a frozen rule a run must pass before it may claim anything.
+  Written before the run and never edited after it, because editing a
+  frozen document is editing the record. A gate that cannot fire is not a
+  gate, and neither is one placed on a path the operator chooses freely.
+- **cell** — one scene at one seed: the smallest unit that gets a record.
+  A run that lost cells is not a smaller run; it stops.
+- **band** — how much a measurement moves when nothing changes but
+  sampling. A threshold below its band reads noise and calls it an effect.
+  Measure the band *before* choosing the threshold.
 - **seal** — corpus hash, script hash, question seed, sampling seed, date.
   Two candidates from one corpus differing only by sampling seed are
-  *different candidates*, not two samples of one.
-- **band** — how much a measurement moves when nothing changes but sampling.
-  A threshold below its band reads noise.
-- **counted vs judged axis** — counted axes are computed from replayed
-  events and are stable; judged axes are a model's label and move. Do not
-  average them together, and do not gate on a judged axis at small cell
-  counts.
+  *different candidates*, not two samples of one. A sealed file is its
+  bytes.
+- **verdict** — how a run ended: `ACCEPTED`, `REJECTED`, `UNRESOLVED`,
+  `DIAGNOSTIC`, `COMPLETE`, or one of the `HELD_*` states.
+- **held** — the line stopped because something needed is absent, not
+  because something failed. `HELD_FOR_LABELLING` is waiting; it is not
+  broken, and it is not a pass.
+- **axis** — one dimension of the profile. **Counted** axes are computed
+  from replayed events and are stable; **judged** axes are a model's label
+  and move. Do not average them together, and do not gate on a judged axis
+  at small cell counts.
+- **piece** — the sealed identity file; what the model wrote about itself.
+- **candidate / incumbent** — the piece under test, and the one already
+  running that it must beat.
+- **rubric** — the question a labeller is asked about a cell, with the
+  fields it may see and the verdicts it may return. It names the fields;
+  nothing else reaches the labeller.
+- **arm** — one side of a comparison: a piece, its spec, and the seeds it
+  ran under. Repeating an arm measures its band; comparing two arms is
+  only meaningful against that band.
 
 ## Where to start
 
