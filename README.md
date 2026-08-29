@@ -1,3 +1,5 @@
+<p align="center"><img src="assets/banner.jpg" alt="A craftsman slides a sealed folio across his bench onto the guild's empty judging table; earlier pieces stand turned to the wall behind him." width="100%"></p>
+
 # masterwork
 
 A *masterwork* is the piece a journeyman submits to the guild to qualify as
@@ -49,6 +51,8 @@ sampling seed, date. Without those five it cannot be reproduced, so it
 cannot be sealed.
 
 ## The sitting
+
+<p align="center"><img src="assets/ceremony.jpg" alt="A figure writes alone by lantern light; every earlier work in the room is draped and turned away, and a stick of sealing wax lies unused on the table." width="420"></p>
 
 `pipeline/ceremony.py` runs it. Four properties are the recipe rather than
 implementation detail, and each was paid for:
@@ -231,6 +235,8 @@ candidate sits behind the incumbent. The name is honest about that — a
 masterwork is submitted, and it can be refused.
 
 ---
+
+<p align="center"><img src="assets/icon.jpg" alt="Masterwork guild seal — a struck M hallmark inside a rope ring" width="96"></p>
 
 Contributing: [CONTRIBUTING.md](CONTRIBUTING.md) · Changelog:
 [CHANGELOG.md](CHANGELOG.md) · Licensed under the
