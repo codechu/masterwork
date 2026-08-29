@@ -1,10 +1,11 @@
 #!/usr/bin/env python3
 """Move the version in both places that carry it, together.
 
-The version lives in pyproject.toml and masterwork/__init__.py. A test
-checks they agree; nothing was moving them, and next door a release went
-out with one bumped and the other behind — the package said one version
-while every artefact it produced was stamped with another.
+The version lives in pyproject.toml, masterwork/__init__.py,
+CITATION.cff and .zenodo.json. A test checks they agree; nothing was
+moving them, and next door a release went out with one bumped and three
+behind — the package said one version while every artefact it produced
+was stamped with another, and the archived record cited a third.
 
     tools/bump.py 0.0.2        # edit both, then write the changelog entry
 
@@ -21,6 +22,8 @@ FILES = {
     "pyproject.toml": (r'(?m)^version = "([^"]+)"', 'version = "{v}"'),
     "masterwork/__init__.py": (r'(?m)^__version__ = "([^"]+)"',
                                '__version__ = "{v}"'),
+    "CITATION.cff": (r'(?m)^version: (\S+)', 'version: {v}'),
+    ".zenodo.json": (r'"version": "([^"]+)"', '"version": "{v}"'),
 }
 
 

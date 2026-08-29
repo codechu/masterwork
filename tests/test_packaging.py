@@ -39,11 +39,25 @@ def test_the_judge_is_a_declared_dependency():
 
 
 def test_versions_agree():
-    packaged = re.search(r'(?m)^version = "([^"]+)"',
-                         read("pyproject.toml")).group(1)
-    in_code = re.search(r'(?m)^__version__ = "([^"]+)"',
-                        read("masterwork/__init__.py")).group(1)
-    assert packaged == in_code, f"pyproject {packaged} vs code {in_code}"
+    """Four records now, and a release moves all of them or none.
+
+    Next door a release bumped one of four and left three behind, so the
+    package announced one version while every artefact it produced was
+    stamped with another. The archived record is the worst of them: a DOI
+    citing a version that did not produce the work cannot be corrected
+    after the fact.
+    """
+    found = {
+        "pyproject.toml": re.search(r'(?m)^version = "([^"]+)"',
+                                    read("pyproject.toml")).group(1),
+        "masterwork/__init__.py": re.search(r'(?m)^__version__ = "([^"]+)"',
+                                            read("masterwork/__init__.py")).group(1),
+        "CITATION.cff": re.search(r"(?m)^version: (\S+)",
+                                  read("CITATION.cff")).group(1),
+        ".zenodo.json": re.search(r'"version": "([^"]+)"',
+                                  read(".zenodo.json")).group(1),
+    }
+    assert len(set(found.values())) == 1, f"version drift: {found}"
 
 
 def test_pypi_readme_is_current():

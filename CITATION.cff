@@ -1,0 +1,28 @@
+cff-version: 1.2.0
+message: "If you use Masterwork in your work, please cite it as below."
+title: "Masterwork: a production line for an agent's character"
+abstract: >-
+  Masterwork makes the piece; it does not score it. A model reads a corpus
+  of craft tales and is asked, one axis at a time, what it will hold to —
+  anchorless, in one sitting — then distils its own answers into the
+  standing text it will read on every later request. Candidates are sealed
+  with what is needed to produce them again. Measurement is handed to a
+  separate benchmark rather than performed here, so a run the judge marked
+  self-judged cannot reach a threshold, and a gate that could not measure
+  holds instead of passing.
+type: software
+authors:
+  - family-names: "Barlık"
+    given-names: "Onur"
+    affiliation: "Codechu"
+repository-code: "https://github.com/codechu/masterwork"
+url: "https://pypi.org/project/masterwork/"
+license: Apache-2.0
+version: 0.0.1
+date-released: "2026-08-29"
+keywords:
+  - LLM agents
+  - agent character
+  - identity
+  - preference data
+  - reproducibility

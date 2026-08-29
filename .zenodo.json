@@ -1,0 +1,35 @@
+{
+  "title": "Masterwork: a production line for an agent's character",
+  "description": "<p>Masterwork makes the piece; it does not score it. A model reads a corpus of craft tales and is asked, one axis at a time, what it will hold to — anchorless, in one sitting, with no earlier commitment in view — and then distils its own answers into a standing text that becomes the identity it reads on every later request. The candidate is sealed with everything needed to produce it again: corpus hash, question order, sampling seed, and the sampling profile it was made under.</p><p>What the line will not do is judge its own work. Measurement is handed to <em>journeyman</em>, a separate benchmark, through its command line rather than an import, so the stamp travels with the claim; a run the judge marked self-judged cannot reach a threshold, and a gate that could not measure holds rather than passing. Labelling that needs a human or another model is blind by construction, and the line stops and says so rather than inventing a number. Standard library only, apart from the judge.</p>",
+  "upload_type": "software",
+  "access_right": "open",
+  "license": "Apache-2.0",
+  "version": "0.0.1",
+  "creators": [
+    {
+      "name": "Barlık, Onur",
+      "affiliation": "Codechu"
+    }
+  ],
+  "keywords": [
+    "LLM agents",
+    "agent character",
+    "identity",
+    "preference data",
+    "training data",
+    "reproducibility",
+    "blind labelling"
+  ],
+  "related_identifiers": [
+    {
+      "identifier": "https://pypi.org/project/masterwork/",
+      "relation": "isIdenticalTo",
+      "resource_type": "software"
+    },
+    {
+      "identifier": "https://github.com/codechu/journeyman",
+      "relation": "requires",
+      "resource_type": "software"
+    }
+  ]
+}
