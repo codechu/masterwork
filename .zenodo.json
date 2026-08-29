@@ -1,6 +1,6 @@
 {
   "title": "Masterwork: a production line for an agent's character",
-  "description": "<p>Masterwork makes the piece; it does not score it. A model reads a corpus of craft tales and is asked, one axis at a time, what it will hold to — anchorless, in one sitting, with no earlier commitment in view — and then distils its own answers into a standing text that becomes the identity it reads on every later request. The candidate is sealed with everything needed to produce it again: corpus hash, question order, sampling seed, and the sampling profile it was made under.</p><p>What the line will not do is judge its own work. Measurement is handed to <em>journeyman</em>, a separate benchmark, through its command line rather than an import, so the stamp travels with the claim; a run the judge marked self-judged cannot reach a threshold, and a gate that could not measure holds rather than passing. Labelling that needs a human or another model is blind by construction, and the line stops and says so rather than inventing a number. Standard library only, apart from the judge.</p>",
+  "description": "<p><strong>Masterwork makes the piece; it does not score it.</strong> A model reads a corpus of craft tales and is asked, one axis at a time, what it will hold to. Its answers are its own: nothing is asserted at it, no earlier commitment is anywhere in the context, and at the end it distils its own answers into one standing text — which becomes the identity it reads on every later request. What comes out is a sealed candidate, carrying everything needed to produce it again: corpus hash, question order, sampling seed, and the sampling profile it was made under.</p><p><strong>Four properties of the sitting are the recipe, and each was paid for.</strong> It is <em>anchorless</em> — with an earlier commitment in view the model copies it, and a copy is a role worn rather than a pattern re-derived. It is <em>one session</em>, so the model distils something it actually said a moment ago rather than a text handed to it as its own. The question order is <em>shuffled by a seed</em>, because answers otherwise echo their neighbours. And the closing turn is <em>not a rewrite</em>: it says these are your words, remove repetition, join where they meet, drop nothing. Asked instead to write an identity, a model produces a description of one.</p><p><strong>The line will not judge its own work.</strong> Measurement is handed to <em>journeyman</em>, a separate benchmark, through its command line rather than an import, so the stamp travels with the claim. A run that benchmark marked self-judged cannot reach a threshold. A gate that could not measure holds rather than returning success. Labelling that needs another model or a person is blind by construction — the labeller sees the exchange and nothing that identifies which arm produced it, the key is opened separately, and a label bound to a cell that has since changed counts as missing.</p><p><strong>It stops rather than guessing.</strong> Where a number cannot be earned the line halts and names what is absent, in a stated state such as <code>HELD_AT_GATE</code> or <code>HELD_WITHOUT_MEASUREMENT</code>. The gates are frozen files: thresholds, direction and analysis are written before a run and cannot be edited after seeing results, and a threshold below the arm's own seed-to-seed spread is refused as reading noise rather than effect.</p><p>What ships is the method and the line that runs it, with a starter corpus — the foundation, not the accumulation. Standard library only, apart from the judge.</p>",
   "upload_type": "software",
   "access_right": "open",
   "license": "Apache-2.0",
@@ -27,9 +27,28 @@
       "resource_type": "software"
     },
     {
-      "identifier": "https://github.com/codechu/journeyman",
+      "identifier": "https://github.com/codechu/masterwork",
+      "relation": "isSupplementTo",
+      "resource_type": "software"
+    },
+    {
+      "identifier": "10.5281/zenodo.22085820",
       "relation": "requires",
       "resource_type": "software"
+    }
+  ],
+  "language": "eng",
+  "notes": "<p>The archive is a source snapshot of the tagged release. Normally installed from PyPI (<code>pipx install masterwork</code>), which brings the judge it cannot finish without; <code>python examples/held_at_gate.py</code> runs a full pass offline, with no model, network or credentials, and ends in a held verdict because that is what it is there to show.</p><p><strong>Status, stated rather than discovered:</strong> pre-1.0, and not proven. No candidate has yet separated from the incumbent through a frozen gate. The apparatus is the contribution; the result is not in yet, and the repository says so on its front page rather than leaving it to be found.</p>",
+  "subjects": [
+    {
+      "term": "Artificial intelligence",
+      "identifier": "http://id.loc.gov/authorities/subjects/sh85008180",
+      "scheme": "url"
+    },
+    {
+      "term": "Machine learning",
+      "identifier": "http://id.loc.gov/authorities/subjects/sh85079324",
+      "scheme": "url"
     }
   ]
 }
