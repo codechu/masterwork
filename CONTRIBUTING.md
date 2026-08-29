@@ -104,8 +104,8 @@ Both conventions are legitimate — see
 
 ## Status
 
-Not published, and not proven: no candidate has yet separated from the
-incumbent through a frozen gate. That is stated here rather than discovered
+Published, and not proven: the line runs and is installable, but no
+candidate has yet separated from the incumbent through a frozen gate. That is stated here rather than discovered
 later. If you are here to use the line rather than improve it, read the
 [Failure modes](README.md#failure-modes) section of the README first — a tool that
 produces the appearance of rigour is worse than no tool, and this one can.

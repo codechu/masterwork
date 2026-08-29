@@ -2,7 +2,7 @@
 
 # Masterwork
 
-[![python](https://img.shields.io/badge/python-3.10%2B-blue)](#run-it) [![license](https://img.shields.io/badge/license-Apache--2.0-blue)](https://github.com/codechu/masterwork/blob/v0.0.2/LICENSE) [![dependencies](https://img.shields.io/badge/dependencies-0-brightgreen)](https://github.com/codechu/masterwork/blob/v0.0.2/CONTRIBUTING.md#ground-rules) [![status](https://img.shields.io/badge/status-not%20published-lightgrey)](#status)
+[![python](https://img.shields.io/badge/python-3.10%2B-blue)](#run-it) [![license](https://img.shields.io/badge/license-Apache--2.0-blue)](https://github.com/codechu/masterwork/blob/v0.0.2/LICENSE) [![dependencies](https://img.shields.io/badge/dependencies-1-brightgreen)](https://github.com/codechu/masterwork/blob/v0.0.2/CONTRIBUTING.md#ground-rules) [![status](https://img.shields.io/badge/status-unproven-lightgrey)](#status)
 
 *Makes a character for a model. Does not score it.*
 
@@ -237,7 +237,7 @@ Not automatable, and this is the honest part:
 
 ## Status
 
-Not published, and not proven. Our own corpus has eighteen tales and took
+Published, and not proven. Our own corpus has eighteen tales and took
 months. It has produced eighteen candidates and none of them is ahead of the
 agent already running: the closest comparison came back `UNRESOLVED` rather
 than won — the difference was smaller than the gate could resolve, which is not

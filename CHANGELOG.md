@@ -9,6 +9,17 @@ loop has turned around and the work has started serving the instrument.
 
 ## Unreleased
 
+- **The badges said things that had stopped being true.** One read
+  `status: not published` on a package that is on PyPI, and another read
+  `dependencies: 0` while `journeyman-bench` is a declared requirement —
+  the badge asserting exactly the fact the release had just changed. The
+  Status section and CONTRIBUTING said "not published" too. Published is
+  now said where it is true, and unproven where that is what is meant.
+- The three badges that assert a fact — Python floor, dependency count,
+  licence — are checked against `pyproject.toml`, and a fourth test
+  refuses any badge claiming the package is unpublished. Nothing read
+  them before, so they could only go stale silently.
+
 - **Three stages had no page.** The sitting — the one stage that makes
   something rather than checking it — was a single line in the run spec
   naming a script file whose format was written down nowhere, in a tool
