@@ -150,6 +150,19 @@ def label(argv=None) -> int:
         print(f"HELD: no cells matched {a.cells}")
         return 1
 
+    stems = [os.path.splitext(os.path.basename(x))[0] for x in paths]
+    # Labels are joined back to cells by file stem, here and in the line's own
+    # missing-label check. Two cells sharing one stem — the same grid run per
+    # arm into separate directories — would quietly overwrite each other's
+    # label, and the arm that lost would be scored with the other one's.
+    clashes = sorted({n for n in stems if stems.count(n) > 1})
+    if clashes:
+        print(f"HELD: {len(clashes)} cell name(s) appear more than once: "
+              f"{', '.join(clashes[:5])}. Labels are joined back by name, so "
+              f"the duplicates would overwrite each other. Name cells for the "
+              f"arm as well as the case.")
+        return 1
+
     os.makedirs(a.out, exist_ok=True)
     labels_path = os.path.join(a.out, "labels.json")
     key_path = os.path.join(a.out, "key.json")
@@ -158,7 +171,7 @@ def label(argv=None) -> int:
               f"is how a result gets chosen; pass --relabel to say you meant it.")
         return 1
 
-    tells = telling([os.path.splitext(os.path.basename(p))[0] for p in paths])
+    tells = telling(stems)
 
     order = list(paths)
     random.Random(a.blind_seed).shuffle(order)

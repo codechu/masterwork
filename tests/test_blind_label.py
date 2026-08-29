@@ -121,3 +121,16 @@ def test_empty_grid_is_held_not_reported_as_nothing_to_do():
     with tempfile.TemporaryDirectory() as tmp:
         _cells, rubric, cmd, out = workshop(tmp)
         assert run(os.path.join(tmp, "nowhere", "*.json"), rubric, cmd, out) == 1
+
+
+def test_two_cells_with_one_name_are_held():
+    """Same grid per arm in separate directories: labels would overwrite."""
+    with tempfile.TemporaryDirectory() as tmp:
+        cells, rubric, cmd, out = workshop(tmp)
+        other = os.path.join(tmp, "arm-b")
+        os.makedirs(other)
+        json.dump({"arm": "b", "seed": 4242,
+                   "cases": [{"prompt": "is the tale there?", "answer": "no"}]},
+                  open(os.path.join(other, "candidate_s4242.json"), "w"))
+        both = os.path.join(tmp, "*", "candidate_s4242.json")
+        assert run(both, rubric, cmd, out) == 1
