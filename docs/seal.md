@@ -73,6 +73,14 @@ regular expression. It is the exception; if you find yourself reaching for
 it often, the shape notation is missing something and that is worth
 saying.
 
+**A shape locates a value; it does not rewrite one.** `dd/MM/yyyy` reads
+`29/08/2026` as `29/08/2026`, not as `2026-08-29`. Nothing here parses a
+date, compares two, or sorts by one — the field's job is that the sitting
+recorded when it happened and did not leave it blank. Because `format`
+says which part is the year, normalising becomes possible the day two
+workshops' seals need comparing; a regular expression could never have
+told us that much, which is the difference between the two notations.
+
 **A sealed file is its bytes.** Changing them to satisfy the gate is the one
 repair that is never correct.
 
