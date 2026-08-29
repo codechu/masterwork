@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """One door into the line.
 
-Every stage was reachable only as `python3 -m pipeline.<module>`, which
+Every stage was reachable only as `python3 -m masterwork <module>`, which
 asks a reader to know four module paths that are not discoverable from
 each other, and printed the interpreter's own path in its usage line —
 a different string on every machine, and not a command anyone would type.
@@ -19,7 +19,7 @@ import argparse
 import importlib
 import sys
 
-from pipeline import __version__
+from masterwork import __version__
 
 NAME = "MASTERWORK"
 RIGHT = "character production line"
@@ -30,15 +30,15 @@ GAP = 4  # least space between the name and the words on its right
 # command -> (module, one-line help). The help is the stage's own
 # description, so the two cannot say different things.
 COMMANDS = {
-    "line": ("pipeline.line", "run one campaign through the line"),
-    "campaign": ("pipeline.campaign", "run a campaign: repeats, band, comparison"),
-    "ceremony": ("pipeline.ceremony", "hold a sitting and seal the piece"),
-    "gate": ("pipeline.gate", "check frozen gate files"),
-    "cells": ("pipeline.cells", "completeness gate for a battery"),
-    "seal": ("pipeline.seal", "verify a candidate's seal"),
-    "pairs": ("pipeline.pairs", "cut training data from scored runs"),
-    "retain": ("pipeline.retain", "run-directory retention"),
-    "label": ("tools.blind_label", "blind-label cells for a judged axis"),
+    "line": ("masterwork.line", "run one campaign through the line"),
+    "campaign": ("masterwork.campaign", "run a campaign: repeats, band, comparison"),
+    "ceremony": ("masterwork.ceremony", "hold a sitting and seal the piece"),
+    "gate": ("masterwork.gate", "check frozen gate files"),
+    "cells": ("masterwork.cells", "completeness gate for a battery"),
+    "seal": ("masterwork.seal", "verify a candidate's seal"),
+    "pairs": ("masterwork.pairs", "cut training data from scored runs"),
+    "retain": ("masterwork.retain", "run-directory retention"),
+    "label": ("masterwork.blind_label", "blind-label cells for a judged axis"),
 }
 
 

@@ -1,8 +1,35 @@
-<p align="center"><img src="assets/banner.jpg" alt="A craftsman slides a sealed folio across his bench onto the guild's empty judging table; earlier pieces stand turned to the wall behind him." width="100%"></p>
+Metadata-Version: 2.4
+Name: masterwork
+Version: 0.0.0
+Summary: A production line for agent character: a sitting the model speaks for itself in, sealed candidates, frozen gates, and a verdict it is not allowed to give itself.
+Author: Codechu
+License-Expression: Apache-2.0
+Project-URL: Homepage, https://github.com/codechu/masterwork
+Project-URL: Changelog, https://github.com/codechu/masterwork/blob/HEAD/CHANGELOG.md
+Project-URL: Contributing, https://github.com/codechu/masterwork/blob/HEAD/CONTRIBUTING.md
+Keywords: agents,ai-agents,llm,llm-agents,character,identity,preference-data,dpo,training-data,evaluation-harness
+Classifier: Development Status :: 3 - Alpha
+Classifier: Environment :: Console
+Classifier: Intended Audience :: Developers
+Classifier: Intended Audience :: Science/Research
+Classifier: Operating System :: OS Independent
+Classifier: Programming Language :: Python :: 3
+Classifier: Programming Language :: Python :: 3.10
+Classifier: Programming Language :: Python :: 3.11
+Classifier: Programming Language :: Python :: 3.12
+Classifier: Programming Language :: Python :: 3.13
+Classifier: Topic :: Scientific/Engineering :: Artificial Intelligence
+Requires-Python: >=3.10
+Description-Content-Type: text/markdown
+License-File: LICENSE
+Requires-Dist: journeyman-bench>=0.2.1
+Dynamic: license-file
+
+<p align="center"><img src="https://raw.githubusercontent.com/codechu/masterwork/v0.0.0/assets/banner.jpg" alt="A craftsman slides a sealed folio across his bench onto the guild's empty judging table; earlier pieces stand turned to the wall behind him." width="100%"></p>
 
 # Masterwork
 
-[![python](https://img.shields.io/badge/python-3.10%2B-blue)](#run-it) [![license](https://img.shields.io/badge/license-Apache--2.0-blue)](LICENSE) [![dependencies](https://img.shields.io/badge/dependencies-0-brightgreen)](CONTRIBUTING.md#ground-rules) [![status](https://img.shields.io/badge/status-not%20published-lightgrey)](#status)
+[![python](https://img.shields.io/badge/python-3.10%2B-blue)](#run-it) [![license](https://img.shields.io/badge/license-Apache--2.0-blue)](https://github.com/codechu/masterwork/blob/v0.0.0/LICENSE) [![dependencies](https://img.shields.io/badge/dependencies-0-brightgreen)](https://github.com/codechu/masterwork/blob/v0.0.0/CONTRIBUTING.md#ground-rules) [![status](https://img.shields.io/badge/status-not%20published-lightgrey)](#status)
 
 *Makes a character for a model. Does not score it.*
 
@@ -26,28 +53,19 @@ fabricated premise is not a personality trait, it is the job.
 
 ## Run it
 
-Nothing to buy. Python 3.10+ and the standard library.
+Nothing to install and nothing to buy. Python 3.10+, the standard library, and
+this repository:
 
 ```bash
-pipx install masterwork      # brings journeyman, its judge
-masterwork                   # what it is, and its stages
-masterwork gate gates/       # check the gate templates
-```
-
-Or from a clone, with nothing installed at all:
-
-```bash
+python -m masterwork              # what it is, and its stages
+python -m pytest tests/ -q        # 96 tests, offline
 python -m masterwork gate gates/  # check the gate templates
-python -m pytest tests/ -q        # 102 tests, offline
 python examples/held_at_gate.py   # one run, end to end
 ```
 
 Generation and judging are *commands named in a run spec*, so those two stages
 need whatever you point them at — an inference endpoint you supply, and
-`journeyman` (>= 0.2.1) for the judge stage. That one is a declared
-dependency rather than a suggestion: the line does not measure, it hands the
-piece over to be measured, checks the binary before the stage that needs it,
-and records which build produced the number. Everything else in the line is
+`journeyman` (>= 0.2.1) on `PATH` for the judge stage — the line hands the piece over to be measured and records which build did it. Everything else in the line is
 this repository's own and runs offline. The example below names neither, which
 is why it works on a bare checkout:
 
@@ -88,7 +106,7 @@ record, and exits in a way that says *waiting*, not *broken*.
 | `HELD_WITHOUT_PURPOSE` | the spec does not say what the run decides | write `purpose`; if you cannot say what changes on each outcome, the run is not ready |
 | `HELD_AT_SEAL` | the piece is unreproducible, or the deployed copy differs | fix the seal or the deployment — never run "just to see" |
 | `HELD_AT_COMPLETENESS` | the grid is short | find the missing cells; if proceeding anyway, declare it |
-| `HELD_FOR_LABELLING` | labels are missing, empty, or written for an older version of a cell | get them with [`masterwork/blind_label.py`](masterwork/blind_label.py); the line is waiting, not broken |
+| `HELD_FOR_LABELLING` | labels are missing, empty, or written for an older version of a cell | get them with [`masterwork/blind_label.py`](https://github.com/codechu/masterwork/blob/v0.0.0/masterwork/blind_label.py); the line is waiting, not broken |
 | `HELD_AT_MEASUREMENT` | the benchmark says the score is not comparable | judge from a separate endpoint, or declare and keep the stamp |
 | `HELD_AT_GATE` | a threshold sits inside its own noise | the gate is void; measure the band, write a new gate |
 | `HELD_WITHOUT_MEASUREMENT` | a rule names an axis and nothing measured it | judge with the benchmark, or declare the run diagnostic — a gate that was checked is not a gate that was applied |
@@ -146,7 +164,7 @@ deleted, because deciding what to remove is not the line's call.
 
 ## Making a piece
 
-<p align="center"><img src="assets/ceremony.jpg" alt="A figure writes alone by lantern light; every earlier work in the room is draped and turned away, and a stick of sealing wax lies unused on the table." width="520"></p>
+<p align="center"><img src="https://raw.githubusercontent.com/codechu/masterwork/v0.0.0/assets/ceremony.jpg" alt="A figure writes alone by lantern light; every earlier work in the room is draped and turned away, and a stick of sealing wax lies unused on the table." width="520"></p>
 
 `pipeline/ceremony.py` runs the sitting. Four properties are the recipe rather
 than implementation detail, and each was paid for:
@@ -193,10 +211,10 @@ You get the line and its gates, the shape of the sitting, and the method
 written down: how a tale differs from an instruction, where a tale comes from,
 what a question has to do, why instructions come last, and how to tag a tale
 whose effect cannot be separated. That is
-[`corpus/GROWING.md`](corpus/GROWING.md), and it is the part that transfers.
+[`corpus/GROWING.md`](https://github.com/codechu/masterwork/blob/v0.0.0/corpus/GROWING.md), and it is the part that transfers.
 
 You do not get a corpus. Three pairs come with the repository in
-[`corpus/starter/`](corpus/starter/) so the machinery runs end to end and the
+[`corpus/starter/`](https://github.com/codechu/masterwork/blob/v0.0.0/corpus/starter/) so the machinery runs end to end and the
 form is unambiguous; they are a beginning and they are meant to be outgrown.
 The corpus is the work, and it has to be yours: a tale is written from
 something **you** measured and got wrong, and a corpus assembled from someone
@@ -252,12 +270,12 @@ the position — a masterwork is submitted, and it can be refused.
 
 | document | when you need it |
 |---|---|
-| [`AGENTS.md`](AGENTS.md) | before running anything — the refusals, the vocabulary, and the four things not to do. Read it whether or not you are an agent |
-| [`docs/run-spec.md`](docs/run-spec.md) | writing the JSON for one run, field by field |
-| [`docs/campaigns.md`](docs/campaigns.md) | repeating an arm to measure a band, or comparing two arms against it |
-| [`docs/gates.md`](docs/gates.md) | writing a threshold that can hold — start from [`gates/succession.md`](gates/succession.md) |
-| [`corpus/GROWING.md`](corpus/GROWING.md) | before writing a single tale — the shape is in [`corpus/starter/`](corpus/starter/) |
-| [`CHANGELOG.md`](CHANGELOG.md) | every entry names the incident that caused it |
+| [`AGENTS.md`](https://github.com/codechu/masterwork/blob/v0.0.0/AGENTS.md) | before running anything — the refusals, the vocabulary, and the four things not to do. Read it whether or not you are an agent |
+| [`docs/run-spec.md`](https://github.com/codechu/masterwork/blob/v0.0.0/docs/run-spec.md) | writing the JSON for one run, field by field |
+| [`docs/campaigns.md`](https://github.com/codechu/masterwork/blob/v0.0.0/docs/campaigns.md) | repeating an arm to measure a band, or comparing two arms against it |
+| [`docs/gates.md`](https://github.com/codechu/masterwork/blob/v0.0.0/docs/gates.md) | writing a threshold that can hold — start from [`gates/succession.md`](https://github.com/codechu/masterwork/blob/v0.0.0/gates/succession.md) |
+| [`corpus/GROWING.md`](https://github.com/codechu/masterwork/blob/v0.0.0/corpus/GROWING.md) | before writing a single tale — the shape is in [`corpus/starter/`](https://github.com/codechu/masterwork/blob/v0.0.0/corpus/starter/) |
+| [`CHANGELOG.md`](https://github.com/codechu/masterwork/blob/v0.0.0/CHANGELOG.md) | every entry names the incident that caused it |
 
 <details>
 <summary>Layout</summary>
@@ -275,8 +293,8 @@ runs/       local run directories (ignored — heavy and re-derivable)
 
 ---
 
-<p align="center"><img src="assets/icon.png" alt="Masterwork guild seal — a struck M hallmark inside a rope ring" width="96"></p>
+<p align="center"><img src="https://raw.githubusercontent.com/codechu/masterwork/v0.0.0/assets/icon.png" alt="Masterwork guild seal — a struck M hallmark inside a rope ring" width="96"></p>
 
-Contributing: [CONTRIBUTING.md](CONTRIBUTING.md) · Changelog:
-[CHANGELOG.md](CHANGELOG.md) · Licensed under the
-[Apache License 2.0](LICENSE).
+Contributing: [CONTRIBUTING.md](https://github.com/codechu/masterwork/blob/v0.0.0/CONTRIBUTING.md) · Changelog:
+[CHANGELOG.md](https://github.com/codechu/masterwork/blob/v0.0.0/CHANGELOG.md) · Licensed under the
+[Apache License 2.0](https://github.com/codechu/masterwork/blob/v0.0.0/LICENSE).

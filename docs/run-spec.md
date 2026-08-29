@@ -5,7 +5,7 @@ and stops at the first gate that holds. Every field below is what the code
 actually reads — `pipeline/line.py` is the authority; this file explains why
 each one is there.
 
-    python -m pipeline.line spec.json --out runs
+    python -m masterwork.line spec.json --out runs
 
 ## purpose — required
 
@@ -108,18 +108,18 @@ here instead of scoring deleted answers.
 does not relabel, which is deliberate: a line that relabelled every time would
 walk into the refusal below and teach whoever runs it to keep the override on.
 
-`tools/blind_label.py` answers the hold, and how it does it is the point:
+`masterwork/blind_label.py` answers the hold, and how it does it is the point:
 only fields the rubric names reach the labeller, the order is shuffled by a
 declared seed, the key mapping cells to blind ids is written aside and opened
 afterwards, and an answer that will not parse is written as `null` rather than
 guessed — which brings the run straight back to this gate.
 
 ```json
-"command": "tools/blind_label.py label --cells '/tmp/run/cells/*.json' --rubric r.json --command 'my-judge' --out /tmp/run/blind --key /secure/key.json --blind-seed 20260829 --labeller other-model --generated-by the-candidate --arm-words candidate,incumbent && tools/blind_label.py reveal --out /tmp/run/blind --key /secure/key.json --to '/tmp/run/labels/{cell}.json'"
+"command": "masterwork/blind_label.py label --cells '/tmp/run/cells/*.json' --rubric r.json --command 'my-judge' --out /tmp/run/blind --key /secure/key.json --blind-seed 20260829 --labeller other-model --generated-by the-candidate --arm-words candidate,incumbent && masterwork/blind_label.py reveal --out /tmp/run/blind --key /secure/key.json --to '/tmp/run/labels/{cell}.json'"
 ```
 
 A rubric is `axis`, `verdicts`, `fields` (placeholder to dotted path in the
-cell record) and `prompt`. `tools/rubric-example.json` is one, in full.
+cell record) and `prompt`. `masterwork/rubric-example.json` is one, in full.
 
 Three flags are worth knowing rather than copying. `--key` puts the blind-id
 map somewhere the labeller cannot read, which matters when the labeller is an

@@ -48,7 +48,7 @@ most valuable thing here, and the bar is that it be mechanical: a rule
 somebody has to remember gets read, agreed with and skipped anyway. If you
 can state the failure as a condition the line can check, it belongs in
 `pipeline/`; if it needs a model to answer, it belongs in `tools/` behind a
-command, like `tools/blind_label.py`.
+command, like `masterwork/blind_label.py`.
 
 **The method.** [`corpus/GROWING.md`](corpus/GROWING.md) is how a corpus is
 grown — what makes a tale differ from an instruction, where a tale comes

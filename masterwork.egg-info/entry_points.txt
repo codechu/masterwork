@@ -1,0 +1,2 @@
+[console_scripts]
+masterwork = masterwork.__main__:main

@@ -51,10 +51,10 @@ the instrument is the same whoever is judging. And it never invents a verdict
 the line reads as an unlabelled cell and holds on. An unparseable label that
 became a category would be a number nobody measured.
 
-    tools/blind_label.py label  --cells 'runs/x/cells/*.json' --rubric r.json \
+    masterwork/blind_label.py label  --cells 'runs/x/cells/*.json' --rubric r.json \
         --command 'my-judge' --out runs/x/labels --blind-seed 20260829 \
         --labeller some-model --generated-by the-candidate
-    tools/blind_label.py reveal --out runs/x/labels --to 'runs/x/labels/{cell}.json'
+    masterwork/blind_label.py reveal --out runs/x/labels --to 'runs/x/labels/{cell}.json'
 """
 from __future__ import annotations
 

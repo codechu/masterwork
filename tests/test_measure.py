@@ -5,7 +5,7 @@ import sys
 import tempfile
 
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
-from pipeline import measure  # noqa: E402
+from masterwork import measure  # noqa: E402
 
 
 def test_command_carries_the_piece_and_a_separate_judge():

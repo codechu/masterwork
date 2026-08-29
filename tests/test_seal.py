@@ -4,7 +4,7 @@ import sys
 import tempfile
 
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
-from pipeline import seal  # noqa: E402
+from masterwork import seal  # noqa: E402
 
 COMPLETE = """# masterwork seal
 # name: Example

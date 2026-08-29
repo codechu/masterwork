@@ -36,11 +36,11 @@ import subprocess
 import sys
 import time
 
-from pipeline import cells as cells_gate
-from pipeline import gate as gate_check
-from pipeline import measure
-from pipeline import retain
-from pipeline import seal as seal_gate
+from masterwork import cells as cells_gate
+from masterwork import gate as gate_check
+from masterwork import measure
+from masterwork import retain
+from masterwork import seal as seal_gate
 
 
 def _run(command: str, log_path: str | None) -> tuple[int, str]:

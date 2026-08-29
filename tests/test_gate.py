@@ -4,7 +4,7 @@ import sys
 import tempfile
 
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
-from pipeline import gate  # noqa: E402
+from masterwork import gate  # noqa: E402
 
 GOOD = """## K1
     measure: adoption

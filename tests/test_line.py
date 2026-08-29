@@ -6,7 +6,7 @@ import sys
 import tempfile
 
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
-from pipeline.line import Line  # noqa: E402
+from masterwork.line import Line  # noqa: E402
 
 SEALED = """# name: Example
 # corpus hash: {corpus}
@@ -37,7 +37,7 @@ GATE_INSIDE_BAND = GATE_OK.replace("threshold: 0.33 — above the band",
 def build(tmp, gate_text=GATE_OK, closing="done", cells_n=2, gate=True):
     corpus = os.path.join(tmp, "corpus.md")
     open(corpus, "w").write("tales")
-    from pipeline import seal
+    from masterwork import seal
     identity = os.path.join(tmp, "candidate.txt")
     open(identity, "w").write(SEALED.format(corpus=seal.file_hash(corpus)))
     cells_dir = os.path.join(tmp, "cells")
@@ -126,7 +126,7 @@ def test_threshold_inside_band_holds_and_is_recorded():
 
 def test_self_judged_measurement_never_reaches_the_gate():
     """journeyman says 'not comparable'; the line treats that as a gate."""
-    import pipeline.line as line_mod
+    import masterwork.line as line_mod
     with tempfile.TemporaryDirectory() as tmp:
         spec = build(tmp)
         report = os.path.join(tmp, "report.json")
@@ -157,7 +157,7 @@ def _labelled_spec(tmp, labels):
 
 def test_missing_labels_hold_the_line_before_judging():
     """Labelling is outside this house; waiting beats guessing."""
-    import pipeline.line as line_mod
+    import masterwork.line as line_mod
     with tempfile.TemporaryDirectory() as tmp:
         spec = _labelled_spec(tmp, {"c0": "DENIED"})   # c1 unlabelled
         line = line_mod.Line(spec, os.path.join(tmp, "out"))
@@ -169,14 +169,14 @@ def test_missing_labels_hold_the_line_before_judging():
 
 def test_empty_label_counts_as_missing():
     """A file that exists and says nothing looks answered. It is not."""
-    import pipeline.line as line_mod
+    import masterwork.line as line_mod
     with tempfile.TemporaryDirectory() as tmp:
         spec = _labelled_spec(tmp, {"c0": "DENIED", "c1": ""})
         assert line_mod.Line(spec, os.path.join(tmp, "out")).run() == 3
 
 
 def test_complete_labels_let_the_run_continue():
-    import pipeline.line as line_mod
+    import masterwork.line as line_mod
     with tempfile.TemporaryDirectory() as tmp:
         spec = _labelled_spec(tmp, {"c0": "DENIED", "c1": "ADOPTED"})
         assert line_mod.Line(spec, os.path.join(tmp, "out")).run() == 0
@@ -186,7 +186,7 @@ def test_complete_labels_let_the_run_continue():
 def test_a_label_written_for_an_older_version_of_a_cell_is_missing():
     """The stale-label path: cells regenerated, names unchanged, labels kept."""
     import hashlib
-    import pipeline.line as line_mod
+    import masterwork.line as line_mod
     with tempfile.TemporaryDirectory() as tmp:
         spec = _labelled_spec(tmp, {"c0": "DENIED", "c1": "ADOPTED"})
         cells = sorted(glob.glob(spec["label"]["cells"]))
@@ -203,7 +203,7 @@ def test_a_label_written_for_an_older_version_of_a_cell_is_missing():
 
 def test_a_passing_label_stage_records_who_labelled():
     """A stage silent on success drops the stamps the number has to travel with."""
-    import pipeline.line as line_mod
+    import masterwork.line as line_mod
     with tempfile.TemporaryDirectory() as tmp:
         spec = _labelled_spec(tmp, {"c0": "DENIED", "c1": "ADOPTED"})
         for name in ("c0", "c1"):
@@ -218,7 +218,7 @@ def test_a_passing_label_stage_records_who_labelled():
 
 
 def test_relabelled_labels_reach_the_verdict():
-    import pipeline.line as line_mod
+    import masterwork.line as line_mod
     with tempfile.TemporaryDirectory() as tmp:
         spec = _labelled_spec(tmp, {"c0": "DENIED", "c1": "ADOPTED"})
         for name in ("c0", "c1"):
@@ -233,7 +233,7 @@ def test_relabelled_labels_reach_the_verdict():
 
 def test_a_run_without_a_stated_purpose_is_held():
     """The gates catch instruments; this one catches the operator."""
-    import pipeline.line as line_mod
+    import masterwork.line as line_mod
     with tempfile.TemporaryDirectory() as tmp:
         spec = build(tmp)
         spec.pop("purpose")
@@ -245,7 +245,7 @@ def test_a_run_without_a_stated_purpose_is_held():
 
 def test_a_diagnostic_run_draws_no_verdict():
     """Resemblance to a description is not the work, and may not accept."""
-    import pipeline.line as line_mod
+    import masterwork.line as line_mod
     with tempfile.TemporaryDirectory() as tmp:
         spec = build(tmp)
         spec["purpose"] = {"question": "where does it drift", "decides": "nothing",
@@ -258,7 +258,7 @@ def test_a_diagnostic_run_draws_no_verdict():
 
 def test_the_labeller_runs_only_when_something_is_unlabelled():
     """Rerunning a complete line must not relabel: it would hit its own refusal."""
-    import pipeline.line as line_mod
+    import masterwork.line as line_mod
     with tempfile.TemporaryDirectory() as tmp:
         spec = _labelled_spec(tmp, {"c0": "DENIED", "c1": "ADOPTED"})
         ran = os.path.join(tmp, "labeller-ran")
@@ -269,12 +269,12 @@ def test_the_labeller_runs_only_when_something_is_unlabelled():
 
 def test_a_mistyped_spec_path_is_held_not_a_traceback():
     """The first thing a new reader gets wrong must not answer with a stack trace."""
-    import pipeline.line as line_mod
+    import masterwork.line as line_mod
     assert line_mod.main(["/nowhere/at/all.json"]) == 4
 
 
 def test_a_spec_that_is_not_json_is_held():
-    import pipeline.line as line_mod
+    import masterwork.line as line_mod
     with tempfile.TemporaryDirectory() as tmp:
         p = os.path.join(tmp, "spec.json")
         open(p, "w").write("{ not json")

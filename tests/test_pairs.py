@@ -4,7 +4,7 @@ import os
 import sys
 
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
-from pipeline import pairs  # noqa: E402
+from masterwork import pairs  # noqa: E402
 
 
 def cell(cid, scene, seed, verdict, positive="good", invalid=False):

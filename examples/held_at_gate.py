@@ -93,5 +93,5 @@ if __name__ == "__main__":
         shutil.rmtree(work)
     os.makedirs(work)
     spec = build(work)
-    sys.exit(subprocess.call([sys.executable, "-m", "pipeline.line", spec,
+    sys.exit(subprocess.call([sys.executable, "-m", "masterwork.line", spec,
                               "--out", "runs"], cwd=ROOT))

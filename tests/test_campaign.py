@@ -5,7 +5,7 @@ import sys
 import tempfile
 
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
-from pipeline import campaign  # noqa: E402
+from masterwork import campaign  # noqa: E402
 
 
 def rec(axes, cost=0.0):

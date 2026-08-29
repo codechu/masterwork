@@ -5,7 +5,7 @@ import sys
 import tempfile
 
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
-from pipeline import cells  # noqa: E402
+from masterwork import cells  # noqa: E402
 
 
 def make(tmp, name, steps=4, closing="done"):

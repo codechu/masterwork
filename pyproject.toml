@@ -1,0 +1,50 @@
+[build-system]
+requires = ["setuptools>=77"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "masterwork"
+version = "0.0.0"
+description = "A production line for agent character: a sitting the model speaks for itself in, sealed candidates, frozen gates, and a verdict it is not allowed to give itself."
+readme = "README.pypi.md"
+requires-python = ">=3.10"
+license = "Apache-2.0"
+license-files = ["LICENSE"]
+authors = [{name = "Codechu"}]
+keywords = [
+  "agents", "ai-agents", "llm", "llm-agents", "character", "identity",
+  "preference-data", "dpo", "training-data", "evaluation-harness",
+]
+classifiers = [
+  "Development Status :: 3 - Alpha",
+  "Environment :: Console",
+  "Intended Audience :: Developers",
+  "Intended Audience :: Science/Research",
+  "Operating System :: OS Independent",
+  "Programming Language :: Python :: 3",
+  "Programming Language :: Python :: 3.10",
+  "Programming Language :: Python :: 3.11",
+  "Programming Language :: Python :: 3.12",
+  "Programming Language :: Python :: 3.13",
+  "Topic :: Scientific/Engineering :: Artificial Intelligence",
+]
+
+# masterwork does not measure. It hands the piece to journeyman and carries
+# the verdict, through the CLI rather than an import, so the stamp travels
+# with the claim. The dependency is declared because a line without a judge
+# cannot finish, and the judge must be able to name its own version.
+dependencies = ["journeyman-bench>=0.2.1"]
+
+[project.scripts]
+masterwork = "masterwork.__main__:main"
+
+[project.urls]
+Homepage = "https://github.com/codechu/masterwork"
+Changelog = "https://github.com/codechu/masterwork/blob/HEAD/CHANGELOG.md"
+Contributing = "https://github.com/codechu/masterwork/blob/HEAD/CONTRIBUTING.md"
+
+[tool.setuptools]
+packages = ["masterwork"]
+
+[tool.setuptools.package-data]
+masterwork = ["rubric-example.json"]

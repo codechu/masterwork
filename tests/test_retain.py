@@ -5,7 +5,7 @@ import sys
 import tempfile
 
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
-from pipeline import retain  # noqa: E402
+from masterwork import retain  # noqa: E402
 
 
 def test_archive_takes_only_the_kilobyte_evidence():

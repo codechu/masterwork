@@ -9,13 +9,28 @@ loop has turned around and the work has started serving the instrument.
 
 ## Unreleased
 
+- **Installable.** `pyproject.toml`, one top-level package, and a
+  `masterwork` console script. The stages lived in top-level `pipeline/`
+  and `tools/`: `pipeline` is taken on PyPI and both are names any
+  environment might already carry, so installing this would have collided
+  with whatever was there. Everything moved under `masterwork/`, with the
+  dispatcher as `masterwork/__main__.py`.
+- **journeyman is a declared dependency**, not a suggestion. Installing
+  masterwork brings the judge it cannot finish without; verified from a
+  built wheel in a clean environment, where the judge preflight then
+  reported `journeyman 0.2.2`.
+- **The PyPI description is generated** (`tools/pypi_readme.py`) and
+  absolutised against the tag being released, never a branch — the
+  sibling repository nearly shipped a rename that would have broken the
+  images on every past release page, with no way to repair them.
+
 - **One door.** `python -m masterwork <stage>` reaches every stage; they were
-  each only `python -m pipeline.<module>`, four paths a reader had to know and
+  each only `python -m masterwork <module>`, four paths a reader had to know and
   none discoverable from the others. Bare `masterwork` prints the mark and the
   stages on stdout and exits 0; an unknown stage is an error on stderr, exit 2.
 - **`--version` answers**, from a single record in `pipeline/__init__.py`.
 - **Every stage's help says `masterwork <stage>`** instead of the interpreter's
-  own path (`usage: python3.14 -m pipeline.gate`), which was a different string
+  own path (`usage: python3.14 -m masterwork.gate`), which was a different string
   on every machine and not a command anyone would type.
 - **A missing judge is named, not thrown.** The line hands the piece to
   journeyman and cannot score it itself, so the judge binary is checked before

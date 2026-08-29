@@ -7,7 +7,7 @@ repeated with nothing changed but sampling; a **gate** is two arms compared
 against that band. `pipeline/campaign.py` runs both, so the repeats,
 aggregation and comparison stop being shell loops joined by hand.
 
-    python -m pipeline.campaign campaign.json --out runs
+    python -m masterwork.campaign campaign.json --out runs
 
 ```json
 {

@@ -15,8 +15,8 @@ import pytest
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 sys.path.insert(0, ROOT)
 
-import masterwork as mw  # noqa: E402
-from pipeline import measure  # noqa: E402
+from masterwork import __main__ as mw  # noqa: E402
+from masterwork import measure  # noqa: E402
 
 
 def test_box_is_square_at_any_version():

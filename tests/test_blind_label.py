@@ -5,7 +5,7 @@ import sys
 import tempfile
 
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
-from tools import blind_label  # noqa: E402
+from masterwork import blind_label  # noqa: E402
 
 RUBRIC = {
     "axis": "existence",

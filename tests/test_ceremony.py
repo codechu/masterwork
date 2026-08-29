@@ -6,7 +6,7 @@ import threading
 from http.server import BaseHTTPRequestHandler, HTTPServer
 
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
-from pipeline import ceremony, seal  # noqa: E402
+from masterwork import ceremony, seal  # noqa: E402
 
 SCRIPT = {
     "questions": [{"label": "A", "text": "question A"},
