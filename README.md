@@ -143,6 +143,8 @@ reported, never deleted: deciding what to remove is not the line's call.
 - [`docs/run-spec.md`](docs/run-spec.md) — the run spec, field by field.
 - [`docs/gates.md`](docs/gates.md) — writing a gate that can hold.
 - [`corpus/GROWING.md`](corpus/GROWING.md) — growing a corpus of your own.
+- [`tools/blind_label.py`](tools/blind_label.py) — labelling an axis nobody
+  can count, without the labeller knowing whose answer it is reading.
 
 ## Layout
 
