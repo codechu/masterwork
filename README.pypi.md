@@ -253,7 +253,10 @@ the position — a masterwork is submitted, and it can be refused.
 | document | when you need it |
 |---|---|
 | [`AGENTS.md`](https://github.com/codechu/masterwork/blob/v0.0.2/AGENTS.md) | before running anything — the refusals, the vocabulary, and the four things not to do. Read it whether or not you are an agent |
+| [`docs/ceremony.md`](https://github.com/codechu/masterwork/blob/v0.0.2/docs/ceremony.md) | making a piece: the four properties of the sitting, and the script that drives it |
+| [`docs/seal.md`](https://github.com/codechu/masterwork/blob/v0.0.2/docs/seal.md) | the five fields a candidate carries, and what to do when the gate refuses one |
 | [`docs/run-spec.md`](https://github.com/codechu/masterwork/blob/v0.0.2/docs/run-spec.md) | writing the JSON for one run, field by field |
+| [`docs/pairs.md`](https://github.com/codechu/masterwork/blob/v0.0.2/docs/pairs.md) | turning a scored run into training data, and what a run leaves behind |
 | [`docs/campaigns.md`](https://github.com/codechu/masterwork/blob/v0.0.2/docs/campaigns.md) | repeating an arm to measure a band, or comparing two arms against it |
 | [`docs/gates.md`](https://github.com/codechu/masterwork/blob/v0.0.2/docs/gates.md) | writing a threshold that can hold — start from [`gates/succession.md`](https://github.com/codechu/masterwork/blob/v0.0.2/gates/succession.md) |
 | [`corpus/GROWING.md`](https://github.com/codechu/masterwork/blob/v0.0.2/corpus/GROWING.md) | before writing a single tale — the shape is in [`corpus/starter/`](https://github.com/codechu/masterwork/blob/v0.0.2/corpus/starter/) |

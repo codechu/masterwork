@@ -7,6 +7,23 @@ The rule this enforces: the tools are fed by failures met while doing real
 work. When a change can only cite a run staged to exercise the tool, the
 loop has turned around and the work has started serving the instrument.
 
+## Unreleased
+
+- **Three stages had no page.** The sitting — the one stage that makes
+  something rather than checking it — was a single line in the run spec
+  naming a script file whose format was written down nowhere, in a tool
+  whose offer is that you bring your own corpus. The seal was five field
+  names that appear when it refuses. `pairs` and `retain` were not
+  mentioned in `docs/` at all. `docs/ceremony.md`, `docs/seal.md` and
+  `docs/pairs.md` say what the code does, and the Documentation table
+  lists them.
+- The seal page carries the incident that prompted it: this house's own
+  production identity cannot pass its own seal gate — the header carries
+  none of the five fields, and the transcript beside it is from an older
+  ceremony that recorded no corpus hash and no sampling seed. What is
+  known about its making comes from a sentence inside the identity, which
+  is prose rather than a record.
+
 ## 0.0.2 — 2026-08-29
 
 - **A released version can be cited.** `.zenodo.json` and `CITATION.cff`

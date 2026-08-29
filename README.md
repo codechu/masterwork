@@ -253,7 +253,10 @@ the position — a masterwork is submitted, and it can be refused.
 | document | when you need it |
 |---|---|
 | [`AGENTS.md`](AGENTS.md) | before running anything — the refusals, the vocabulary, and the four things not to do. Read it whether or not you are an agent |
+| [`docs/ceremony.md`](docs/ceremony.md) | making a piece: the four properties of the sitting, and the script that drives it |
+| [`docs/seal.md`](docs/seal.md) | the five fields a candidate carries, and what to do when the gate refuses one |
 | [`docs/run-spec.md`](docs/run-spec.md) | writing the JSON for one run, field by field |
+| [`docs/pairs.md`](docs/pairs.md) | turning a scored run into training data, and what a run leaves behind |
 | [`docs/campaigns.md`](docs/campaigns.md) | repeating an arm to measure a band, or comparing two arms against it |
 | [`docs/gates.md`](docs/gates.md) | writing a threshold that can hold — start from [`gates/succession.md`](gates/succession.md) |
 | [`corpus/GROWING.md`](corpus/GROWING.md) | before writing a single tale — the shape is in [`corpus/starter/`](corpus/starter/) |
