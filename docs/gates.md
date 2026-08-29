@@ -76,6 +76,11 @@ Field names and the word *above* are configurable, because a gate frozen
 before a run must not be translated afterwards — editing a frozen document
 is editing the record.
 
+So a workshop writes its gates in its own language and teaches the reader
+the dialect. The example below is one such mapping, from the Turkish
+headers this line was first used with; nothing about it is special except
+that it is real:
+
 ```json
 {"band-command": ["BAND-KOMUT"],
  "band-value":   ["BAND-DEĞER"],
