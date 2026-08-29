@@ -57,18 +57,26 @@ def _run(command: str, log_path: str | None) -> tuple[int, str]:
     return p.returncode, (p.stdout + p.stderr)[-2000:]
 
 
-def _missing_labels(cfg: dict) -> list[str]:
-    """Cells whose label file is absent or carries no verdict.
+def _missing_labels(cfg: dict) -> tuple[list[str], dict]:
+    """Cells whose label is absent, empty, or describes a different cell.
 
-    A label file that exists but says nothing is worse than a missing one:
-    it looks answered. Both are reported the same way.
+    Three ways a label fails to be a label, and the first is the least
+    dangerous. A file that exists but says nothing looks answered. A file left
+    over from an earlier run looks answered *and* carries a verdict: the cells
+    were regenerated, the names did not change, and the labels describe
+    transcripts that no longer exist. So a label carries the hash of the cell
+    it judged, and a label that does not match the cell on disk is missing.
+
+    Returns the problems and what the labelling can vouch for.
     """
     import glob as _glob
     pattern = cfg.get("expect")
     if not pattern:
-        return []
+        return [], {}
     key = cfg.get("key", "label")
-    missing = []
+    missing: list[str] = []
+    seen: dict = {"labelled": 0, "labellers": set(), "rubrics": set(),
+                  "relabelled": False}
     for cell in sorted(_glob.glob(cfg["cells"])) if cfg.get("cells") else []:
         name = os.path.splitext(os.path.basename(cell))[0]
         path = pattern.replace("{cell}", name)
@@ -83,7 +91,24 @@ def _missing_labels(cfg: dict) -> list[str]:
         value = d.get(key) if isinstance(d, dict) else None
         if value in (None, "", []):
             missing.append(f"{name}: label file present but empty")
-    return missing
+            continue
+        stamped = d.get("cell_sha256")
+        if stamped:
+            import hashlib as _h
+            actual = _h.sha256(open(cell, "rb").read()).hexdigest()[:16]
+            if actual != stamped:
+                missing.append(f"{name}: label was written for a different "
+                               f"version of this cell ({stamped} != {actual})")
+                continue
+        seen["labelled"] += 1
+        if d.get("labeller"):
+            seen["labellers"].add(d["labeller"])
+        if d.get("rubric_sha256"):
+            seen["rubrics"].add(d["rubric_sha256"])
+        seen["relabelled"] = seen["relabelled"] or bool(d.get("relabelled"))
+    seen["labellers"] = sorted(seen["labellers"])
+    seen["rubrics"] = sorted(seen["rubrics"])
+    return missing, seen
 
 
 class Line:
@@ -112,6 +137,8 @@ class Line:
                     if (self.spec.get("judge", {}).get("journeyman") or {}).get(k)]
         if (self.spec.get("cells") or {}).get("allow_missing"):
             declared.append("allow_missing")
+        if (self.record.get("labelling") or {}).get("relabelled"):
+            declared.append("relabelled")
         if declared:
             verdict = f"{verdict} (declared: {', '.join(sorted(declared))})"
         self.record["declared"] = declared
@@ -204,22 +231,40 @@ class Line:
 
         if "label" in s:
             c = s["label"]
-            if c.get("command"):
+            missing, seen = _missing_labels(c)
+            # The command runs when there is something to label, not every
+            # time the line runs. A line that relabels on every rerun would
+            # walk into its own refusal against replacing labels — and worse,
+            # would teach the operator to keep the override on permanently.
+            if missing and c.get("command"):
                 log = os.path.join(self.out_dir, "label.log")
-                print(f"       running; follow with: tail -f {log}")
+                print(f"       {len(missing)} unlabelled; running the labeller, "
+                      f"follow with: tail -f {log}")
                 rc, tail = _run(c["command"], log)
                 if not self.stage("label", rc == 0, tail if rc else f"log {log}"):
                     self.persist("FAILED_IN_LABELLING")
                     return 1
-            missing = _missing_labels(c)
+                missing, seen = _missing_labels(c)
             if missing:
                 self.stage("label", False,
                            [f"{len(missing)} cell(s) still unlabelled",
                             "labelling is deliberately outside this house — "
                             "the line waits rather than guessing"]
                            + [f"  {m}" for m in missing[:20]])
+                self.record["labelling"] = seen
                 self.persist("HELD_FOR_LABELLING")
                 return 3
+            if seen:
+                # A stage that says nothing when it passes drops the stamps.
+                # Who labelled, against which rubric, and whether these labels
+                # replaced earlier ones all travel with the number.
+                self.record["labelling"] = seen
+                self.stage("label", True,
+                           [f"{seen['labelled']} labelled by "
+                            f"{', '.join(seen['labellers']) or 'unnamed'} · "
+                            f"rubric {', '.join(seen['rubrics']) or 'unstamped'}"]
+                           + (["these labels replaced earlier ones"]
+                              if seen["relabelled"] else []))
 
         if "judge" in s:
             c = s["judge"]

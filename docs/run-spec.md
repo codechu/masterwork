@@ -99,6 +99,15 @@ carries nothing counts as missing — it is the worse case, because it looks
 answered. With labels outstanding the run ends `HELD_FOR_LABELLING`: waiting,
 not broken. Rerun when they arrive.
 
+A label is also missing when it was written for a different version of the
+cell. Labels carry the hash of the record they judged, so regenerating the
+cells and keeping the labels — same names, different transcripts — comes back
+here instead of scoring deleted answers.
+
+`command` runs only when something is unlabelled. Rerunning a complete line
+does not relabel, which is deliberate: a line that relabelled every time would
+walk into the refusal below and teach whoever runs it to keep the override on.
+
 `tools/blind_label.py` answers the hold, and how it does it is the point:
 only fields the rubric names reach the labeller, the order is shuffled by a
 declared seed, the key mapping cells to blind ids is written aside and opened
@@ -106,11 +115,19 @@ afterwards, and an answer that will not parse is written as `null` rather than
 guessed — which brings the run straight back to this gate.
 
 ```json
-"command": "tools/blind_label.py label --cells '/tmp/run/cells/*.json' --rubric r.json --command 'my-judge' --out /tmp/run/blind --blind-seed 20260829 --labeller other-model --generated-by the-candidate && tools/blind_label.py reveal --out /tmp/run/blind --to '/tmp/run/labels/{cell}.json'"
+"command": "tools/blind_label.py label --cells '/tmp/run/cells/*.json' --rubric r.json --command 'my-judge' --out /tmp/run/blind --key /secure/key.json --blind-seed 20260829 --labeller other-model --generated-by the-candidate --arm-words candidate,incumbent && tools/blind_label.py reveal --out /tmp/run/blind --key /secure/key.json --to '/tmp/run/labels/{cell}.json'"
 ```
 
 A rubric is `axis`, `verdicts`, `fields` (placeholder to dotted path in the
 cell record) and `prompt`. `tools/rubric-example.json` is one, in full.
+
+Three flags are worth knowing rather than copying. `--key` puts the blind-id
+map somewhere the labeller cannot read, which matters when the labeller is an
+agent with a filesystem. `--arm-words` names the arms: the automatic backstop
+against a leak is built from cell filenames, so it has nothing to work with
+when cells are named `cell_01`. And `reveal --relabel` is what it takes to
+replace labels the line already has — it lands on every label written and the
+line puts it on the verdict, next to `allow_self_judged`.
 
 ## judge — submit to the benchmark
 

@@ -1,4 +1,5 @@
 """Line tests: the order of the gates, and that a held run still records."""
+import glob
 import json
 import os
 import sys
@@ -163,6 +164,54 @@ def test_complete_labels_let_the_run_continue():
         assert os.path.exists(os.path.join(tmp, "judged"))
 
 
+def test_a_label_written_for_an_older_version_of_a_cell_is_missing():
+    """The stale-label path: cells regenerated, names unchanged, labels kept."""
+    import hashlib
+    import pipeline.line as line_mod
+    with tempfile.TemporaryDirectory() as tmp:
+        spec = _labelled_spec(tmp, {"c0": "DENIED", "c1": "ADOPTED"})
+        cells = sorted(glob.glob(spec["label"]["cells"]))
+        for cell in cells:
+            name = os.path.splitext(os.path.basename(cell))[0]
+            path = spec["label"]["expect"].replace("{cell}", name)
+            d = json.load(open(path))
+            d["cell_sha256"] = hashlib.sha256(open(cell, "rb").read()).hexdigest()[:16]
+            json.dump(d, open(path, "w"))
+        assert line_mod.Line(spec, os.path.join(tmp, "out")).run() == 0
+        open(cells[0], "a").write(" ")          # the cell was run again
+        assert line_mod.Line(spec, os.path.join(tmp, "out2")).run() == 3
+
+
+def test_a_passing_label_stage_records_who_labelled():
+    """A stage silent on success drops the stamps the number has to travel with."""
+    import pipeline.line as line_mod
+    with tempfile.TemporaryDirectory() as tmp:
+        spec = _labelled_spec(tmp, {"c0": "DENIED", "c1": "ADOPTED"})
+        for name in ("c0", "c1"):
+            path = spec["label"]["expect"].replace("{cell}", name)
+            d = json.load(open(path))
+            d.update(labeller="other-model", rubric_sha256="abc123")
+            json.dump(d, open(path, "w"))
+        assert line_mod.Line(spec, os.path.join(tmp, "out")).run() == 0
+        rec = json.load(open(os.path.join(tmp, "out", "run.json")))
+        assert rec["labelling"]["labellers"] == ["other-model"]
+        assert any(s["stage"] == "label" and s["ok"] for s in rec["stages"])
+
+
+def test_relabelled_labels_reach_the_verdict():
+    import pipeline.line as line_mod
+    with tempfile.TemporaryDirectory() as tmp:
+        spec = _labelled_spec(tmp, {"c0": "DENIED", "c1": "ADOPTED"})
+        for name in ("c0", "c1"):
+            path = spec["label"]["expect"].replace("{cell}", name)
+            d = json.load(open(path))
+            d["relabelled"] = True
+            json.dump(d, open(path, "w"))
+        assert line_mod.Line(spec, os.path.join(tmp, "out")).run() == 0
+        rec = json.load(open(os.path.join(tmp, "out", "run.json")))
+        assert "relabelled" in rec["verdict"]
+
+
 def test_a_run_without_a_stated_purpose_is_held():
     """The gates catch instruments; this one catches the operator."""
     import pipeline.line as line_mod
@@ -186,3 +235,14 @@ def test_a_diagnostic_run_draws_no_verdict():
         assert line.run() == 0
         rec = json.load(open(os.path.join(tmp, "out", "run.json")))
         assert rec["verdict"] == "DIAGNOSTIC"
+
+
+def test_the_labeller_runs_only_when_something_is_unlabelled():
+    """Rerunning a complete line must not relabel: it would hit its own refusal."""
+    import pipeline.line as line_mod
+    with tempfile.TemporaryDirectory() as tmp:
+        spec = _labelled_spec(tmp, {"c0": "DENIED", "c1": "ADOPTED"})
+        ran = os.path.join(tmp, "labeller-ran")
+        spec["label"]["command"] = "touch " + ran
+        assert line_mod.Line(spec, os.path.join(tmp, "out")).run() == 0
+        assert not os.path.exists(ran)

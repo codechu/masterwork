@@ -134,3 +134,55 @@ def test_two_cells_with_one_name_are_held():
                   open(os.path.join(other, "candidate_s4242.json"), "w"))
         both = os.path.join(tmp, "*", "candidate_s4242.json")
         assert run(both, rubric, cmd, out) == 1
+
+
+def test_reveal_refuses_to_replace_a_label_the_line_already_has():
+    """The binding guard is on the path the line reads, not on --out."""
+    with tempfile.TemporaryDirectory() as tmp:
+        cells, rubric, cmd, out = workshop(tmp)
+        dest = os.path.join(tmp, "per-cell", "{cell}.json")
+        run(cells, rubric, cmd, out)
+        assert blind_label.main(["reveal", "--out", out, "--to", dest]) == 0
+        # A second labelling into a directory of the operator's choosing —
+        # the route around a guard that sat on --out.
+        again = os.path.join(tmp, "labels-2")
+        assert run(cells, rubric, cmd, again, "--tries", "1") == 0
+        assert blind_label.main(["reveal", "--out", again, "--to", dest]) == 1
+        assert blind_label.main(["reveal", "--out", again, "--to", dest,
+                                 "--relabel"]) == 0
+        assert json.load(open(dest.replace("{cell}", "candidate_s4242")))["relabelled"]
+
+
+def test_arm_words_hold_a_prompt_when_the_filenames_say_nothing():
+    with tempfile.TemporaryDirectory() as tmp:
+        leaky = dict(RUBRIC, fields=dict(RUBRIC["fields"], question="arm"))
+        cells, rubric, cmd, out = workshop(tmp, rubric=leaky)
+        neutral = os.path.join(tmp, "neutral")
+        os.makedirs(neutral)
+        for i, src in enumerate(sorted(__import__("glob").glob(cells)), 1):
+            json.dump(json.load(open(src)),
+                      open(os.path.join(neutral, f"cell_{i:02d}.json"), "w"))
+        pattern = os.path.join(neutral, "*.json")
+        assert run(pattern, rubric, cmd, out) == 0          # nothing to go on
+        assert run(pattern, rubric, cmd, out + "2",
+                   "--arm-words", "candidate,incumbent") == 1
+
+
+def test_label_carries_the_hash_of_the_cell_it_judged():
+    with tempfile.TemporaryDirectory() as tmp:
+        cells, rubric, cmd, out = workshop(tmp)
+        run(cells, rubric, cmd, out)
+        dest = os.path.join(tmp, "per-cell", "{cell}.json")
+        blind_label.main(["reveal", "--out", out, "--to", dest])
+        assert json.load(open(dest.replace("{cell}", "candidate_s4242")))["cell_sha256"]
+
+
+def test_key_can_be_written_out_of_the_labellers_reach():
+    with tempfile.TemporaryDirectory() as tmp:
+        cells, rubric, cmd, out = workshop(tmp)
+        key = os.path.join(tmp, "elsewhere", "key.json")
+        assert run(cells, rubric, cmd, out, "--key", key) == 0
+        assert not os.path.exists(os.path.join(out, "key.json"))
+        dest = os.path.join(tmp, "per-cell", "{cell}.json")
+        assert blind_label.main(["reveal", "--out", out, "--key", key,
+                                 "--to", dest]) == 0

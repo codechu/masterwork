@@ -20,13 +20,29 @@ Blindness here is mechanical, not a promise:
     carry and others do not are the telling ones, and a prompt containing one
     of its own cell's telling words is refused rather than sent. A word every
     cell shares — the scene, usually — groups nothing and is left alone.
+    The backstop is built from the names of the files in the grid, so it has
+    nothing to work with when cells are named neutrally — `cell_01`,
+    `cell_02`. There, name the arms yourself with `--arm-words`. The whitelist
+    is the guard; this is the net under it.
   * **The order is shuffled by a declared seed.** Cells otherwise arrive
     grouped by arm and the labeller reads the grouping.
   * **The key is written to a separate file** and never read by `label`.
-    `reveal` opens it afterwards and joins the labels back to the cells.
-  * **Labelling twice is not free.** `label` refuses to overwrite its own
-    output. Relabelling after seeing which arm won is the failure this whole
-    dance exists to prevent, so it takes `--relabel` and lands in the record.
+    `reveal` opens it afterwards and joins the labels back to the cells. If
+    the labeller is itself an agent with a filesystem, put the key somewhere
+    it cannot reach with `--key`: "another file in the same directory" is a
+    weaker separation than the word suggests.
+  * **Labelling twice is not free.** Relabelling after seeing which arm won is
+    the failure this whole dance exists to prevent, so overwriting a label the
+    line already has takes `--relabel`, and the flag lands on every label
+    written. The refusal sits in `reveal`, on the path the line reads, because
+    a guard on the working directory guards nothing: that directory is a
+    string the operator types, and one different character starts a clean run.
+
+Each label carries the hash of the cell it judged, so a label left over from
+an earlier run is caught rather than counted. Nothing here can tell whether
+`--labeller` and `--generated-by` are truthful — they are two strings someone
+typed, and a house determined to grade its own piece can type two names. What
+this refuses is the accident, and what it makes is a record.
 
 Two things it deliberately does not do. It has no model client: the labeller
 is a command that reads a prompt on stdin and writes an answer on stdout, so
@@ -65,7 +81,8 @@ def telling(stems: list[str]) -> dict[str, set[str]]:
     nothing. Words of one character are dropped: they collide with prose.
     """
     words = {s: {w.lower() for w in WORD.findall(s) if len(w) > 1} for s in stems}
-    shared = set.intersection(*words.values()) if words else set()
+    # With one cell there is nothing to share, so every word still tells.
+    shared = set.intersection(*words.values()) if len(words) > 1 else set()
     return {s: w - shared for s, w in words.items()}
 
 
@@ -119,11 +136,18 @@ def label(argv=None) -> int:
     ap.add_argument("--rubric", required=True, help="axis, verdicts, fields, prompt")
     ap.add_argument("--command", required=True,
                     help="labeller: reads the prompt on stdin, writes the answer on stdout")
-    ap.add_argument("--out", required=True, help="directory for labels and key")
+    ap.add_argument("--out", required=True, help="directory for the blind labels")
+    ap.add_argument("--key", help="where the blind-id -> cell map goes "
+                                  "(default <out>/key.json); put it out of the "
+                                  "labeller's reach if the labeller has one")
     ap.add_argument("--blind-seed", type=int, required=True,
                     help="shuffles the order; recorded, so the shuffle is reproducible")
     ap.add_argument("--labeller", required=True, help="who is judging")
     ap.add_argument("--generated-by", required=True, help="who produced the cells")
+    ap.add_argument("--arm-words", default="",
+                    help="comma-separated words that name the arms. The "
+                         "automatic backstop is built from cell filenames, so "
+                         "name the arms here whenever the files do not")
     ap.add_argument("--tries", type=int, default=3)
     ap.add_argument("--timeout", type=int, default=600)
     ap.add_argument("--relabel", action="store_true",
@@ -165,13 +189,16 @@ def label(argv=None) -> int:
 
     os.makedirs(a.out, exist_ok=True)
     labels_path = os.path.join(a.out, "labels.json")
-    key_path = os.path.join(a.out, "key.json")
+    key_path = a.key or os.path.join(a.out, "key.json")
     if os.path.exists(labels_path) and not a.relabel:
         print(f"HELD: {labels_path} exists. Labelling again after the key is open "
-              f"is how a result gets chosen; pass --relabel to say you meant it.")
+              f"is how a result gets chosen; pass --relabel to say you meant it. "
+              f"(The binding refusal is in `reveal`, on the path the line reads.)")
         return 1
 
     tells = telling(stems)
+    every_tell = set().union(*tells.values()) if tells else set()
+    every_tell |= {w.strip().lower() for w in a.arm_words.split(",") if w.strip()}
 
     order = list(paths)
     random.Random(a.blind_seed).shuffle(order)
@@ -179,18 +206,22 @@ def label(argv=None) -> int:
 
     # The key is written first and never read again here: nothing downstream of
     # this line knows which arm any cell belongs to.
+    os.makedirs(os.path.dirname(key_path) or ".", exist_ok=True)
     json.dump({bid: path for bid, path in blind}, open(key_path, "w"), indent=1)
 
     out, unparsed = [], 0
     for i, (bid, path) in enumerate(blind, 1):
-        record = json.load(open(path, encoding="utf-8"))
+        raw = open(path, "rb").read()
+        record = json.loads(raw.decode("utf-8"))
         stem = os.path.splitext(os.path.basename(path))[0]
         try:
             prompt = render(rubric, record)
         except Exception as e:
             print(f"HELD: {stem} has no field the rubric names ({e})")
             return 1
-        leaked = sorted(w for w in tells[stem] | {stem} if w in prompt.lower())
+        # Any arm's telling word, not only this cell's: a prompt that names
+        # the arm it is *not* groups the grid just as well.
+        leaked = sorted(w for w in every_tell | {stem} if w in prompt.lower())
         if leaked:
             print(f"HELD: the prompt for {bid} contains {', '.join(leaked)} — part "
                   f"of the cell name {stem!r}. A named field is carrying the "
@@ -207,7 +238,8 @@ def label(argv=None) -> int:
                 break
         if verdict is None:
             unparsed += 1
-        out.append({"blind_id": bid, rubric["axis"]: verdict, "why": why})
+        out.append({"blind_id": bid, rubric["axis"]: verdict, "why": why,
+                    "cell_sha256": hashlib.sha256(raw).hexdigest()[:16]})
         print(f"[{i:>3}/{len(blind)}] {bid} -> {verdict or 'UNPARSED'}", flush=True)
 
     json.dump({"axis": rubric["axis"], "rubric_sha256": digest,
@@ -227,13 +259,30 @@ def label(argv=None) -> int:
 def reveal(argv=None) -> int:
     ap = argparse.ArgumentParser(description="open the key and join labels to cells")
     ap.add_argument("--out", required=True, help="directory written by `label`")
+    ap.add_argument("--key", help="the key file, if it was not left in <out>")
     ap.add_argument("--to", required=True,
                     help="per-cell label path, with {cell} for the cell name")
+    ap.add_argument("--relabel", action="store_true",
+                    help="replace labels the line already has — recorded on "
+                         "every label written, and it reaches the verdict")
     a = ap.parse_args(argv)
 
     data = json.load(open(os.path.join(a.out, "labels.json"), encoding="utf-8"))
-    key = json.load(open(os.path.join(a.out, "key.json"), encoding="utf-8"))
+    key = json.load(open(a.key or os.path.join(a.out, "key.json"), encoding="utf-8"))
     axis = data["axis"]
+
+    # The refusal lives here rather than in `label`, because this is the path
+    # the line reads and the spec fixes. A guard on the working directory is
+    # routed around by typing a different directory.
+    standing = [a.to.replace("{cell}", os.path.splitext(os.path.basename(p))[0])
+                for p in key.values()]
+    already = [p for p in standing if os.path.exists(p)]
+    if already and not a.relabel:
+        print(f"HELD: {len(already)} of these cells already carry a label "
+              f"({already[0]}). Replacing a label the line has already read is "
+              f"how a result gets chosen; pass --relabel to say you meant it.")
+        return 1
+    relabelled = bool(a.relabel or data["relabelled"])
 
     written = 0
     for entry in data["labels"]:
@@ -247,7 +296,8 @@ def reveal(argv=None) -> int:
         json.dump({"cell": cell, "label": entry[axis], "axis": axis,
                    "why": entry["why"], "labeller": data["labeller"],
                    "rubric_sha256": data["rubric_sha256"],
-                   "relabelled": data["relabelled"]},
+                   "cell_sha256": entry.get("cell_sha256"),
+                   "relabelled": relabelled},
                   open(dest, "w"), ensure_ascii=False, indent=1)
         written += 1
 
@@ -256,9 +306,9 @@ def reveal(argv=None) -> int:
         counts[entry[axis]] = counts.get(entry[axis], 0) + 1
     print(f"{written} label(s) written · " +
           " · ".join(f"{k}={v}" for k, v in sorted(counts.items(), key=str)))
-    if data["relabelled"]:
-        print("these labels were produced by a relabelling — say so wherever the "
-              "number is reported")
+    if relabelled:
+        print("these labels replaced ones already in place — the line carries "
+              "that onto the verdict")
     return 0
 
 

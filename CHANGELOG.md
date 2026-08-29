@@ -41,7 +41,20 @@ loop has turned around and the work has started serving the instrument.
   identifying.
 - **Relabelling is not free.** Labelling again after the key is open is how a
   result gets chosen rather than measured, so it takes a flag and the flag
-  lands on every label written.
+  lands on every label written — and on the verdict, beside the other
+  declarations.
+- **A guard on the working directory guards nothing.** The refusal first sat
+  on the labelling output, a path the operator types; a review walked round it
+  by typing one different character, and the stamp on the resulting label read
+  `false`. It now sits on the destination the line reads, which the spec
+  fixes.
+- **Stale labels look answered.** Nothing bound a label to the cell it
+  judged: regenerate the cells, keep the labels, and a run over transcripts
+  that no longer exist completed clean. Labels carry the cell's hash and a
+  mismatch counts as missing.
+- **A stage silent on success drops the stamps.** The label stage recorded
+  nothing when it passed, so who labelled, against which rubric, and whether
+  the labels had been replaced never reached the record.
 
 ### Measurement
 - **Endpoint normalisation.** An endpoint given as `.../v1` became
