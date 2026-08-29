@@ -7,6 +7,32 @@ The rule this enforces: the tools are fed by failures met while doing real
 work. When a change can only cite a run staged to exercise the tool, the
 loop has turned around and the work has started serving the instrument.
 
+## 0.0.2 — 2026-08-29
+
+- **A released version can be cited.** `.zenodo.json` and `CITATION.cff`
+  say what this is, who made it and under what name to refer to it, and
+  the archive record is written as something a reader arriving from a
+  citation would actually read rather than two lines. Zenodo archives on a
+  GitHub release and does not reach back, so 0.0.1 stays uncited and this
+  is the first version with a DOI.
+- **The version lives in four files now**, and `tools/bump.py` and the
+  agreement test cover all four. The archived one is the worst to get
+  wrong: a DOI citing a version that did not produce the work cannot be
+  corrected afterwards.
+- **A release is marked pre-release only when the version is one**
+  (`0.3.0rc1`), not for every `0.x`. GitHub reads the flag as "not for
+  general use" while we tell people to install `0.x`, and it costs the
+  repository its "latest release" outright — the Releases box empties and
+  anything asking for the latest gets nothing, while the index goes on
+  serving the same build as normal.
+- **`assets/README.md`** records how the images were made and what makes
+  them match, including the two faults that pass cost: navy pushed above
+  the floor flattened the banner's only legible region, and both faults
+  went green on the colour metric and were caught by opening the file.
+- **The footer names the family**, which is the only line telling a reader
+  who arrived from a search result that there is a sibling — and here the
+  sibling is the thing that scores what this one makes.
+
 ## 0.0.1 — 2026-08-29
 
 - **Installable.** `pyproject.toml`, one top-level package, and a

@@ -1,8 +1,8 @@
-<p align="center"><img src="https://raw.githubusercontent.com/codechu/masterwork/v0.0.1/assets/banner.jpg" alt="A craftsman slides a sealed folio across his bench onto the guild's empty judging table; earlier pieces stand turned to the wall behind him." width="100%"></p>
+<p align="center"><img src="https://raw.githubusercontent.com/codechu/masterwork/v0.0.2/assets/banner.jpg" alt="A craftsman slides a sealed folio across his bench onto the guild's empty judging table; earlier pieces stand turned to the wall behind him." width="100%"></p>
 
 # Masterwork
 
-[![python](https://img.shields.io/badge/python-3.10%2B-blue)](#run-it) [![license](https://img.shields.io/badge/license-Apache--2.0-blue)](https://github.com/codechu/masterwork/blob/v0.0.1/LICENSE) [![dependencies](https://img.shields.io/badge/dependencies-0-brightgreen)](https://github.com/codechu/masterwork/blob/v0.0.1/CONTRIBUTING.md#ground-rules) [![status](https://img.shields.io/badge/status-not%20published-lightgrey)](#status)
+[![python](https://img.shields.io/badge/python-3.10%2B-blue)](#run-it) [![license](https://img.shields.io/badge/license-Apache--2.0-blue)](https://github.com/codechu/masterwork/blob/v0.0.2/LICENSE) [![dependencies](https://img.shields.io/badge/dependencies-0-brightgreen)](https://github.com/codechu/masterwork/blob/v0.0.2/CONTRIBUTING.md#ground-rules) [![status](https://img.shields.io/badge/status-not%20published-lightgrey)](#status)
 
 *Makes a character for a model. Does not score it.*
 
@@ -88,7 +88,7 @@ record, and exits in a way that says *waiting*, not *broken*.
 | `HELD_WITHOUT_PURPOSE` | the spec does not say what the run decides | write `purpose`; if you cannot say what changes on each outcome, the run is not ready |
 | `HELD_AT_SEAL` | the piece is unreproducible, or the deployed copy differs | fix the seal or the deployment — never run "just to see" |
 | `HELD_AT_COMPLETENESS` | the grid is short | find the missing cells; if proceeding anyway, declare it |
-| `HELD_FOR_LABELLING` | labels are missing, empty, or written for an older version of a cell | get them with [`masterwork/blind_label.py`](https://github.com/codechu/masterwork/blob/v0.0.1/masterwork/blind_label.py); the line is waiting, not broken |
+| `HELD_FOR_LABELLING` | labels are missing, empty, or written for an older version of a cell | get them with [`masterwork/blind_label.py`](https://github.com/codechu/masterwork/blob/v0.0.2/masterwork/blind_label.py); the line is waiting, not broken |
 | `HELD_AT_MEASUREMENT` | the benchmark says the score is not comparable | judge from a separate endpoint, or declare and keep the stamp |
 | `HELD_AT_GATE` | a threshold sits inside its own noise | the gate is void; measure the band, write a new gate |
 | `HELD_WITHOUT_MEASUREMENT` | a rule names an axis and nothing measured it | judge with the benchmark, or declare the run diagnostic — a gate that was checked is not a gate that was applied |
@@ -146,7 +146,7 @@ deleted, because deciding what to remove is not the line's call.
 
 ## Making a piece
 
-<p align="center"><img src="https://raw.githubusercontent.com/codechu/masterwork/v0.0.1/assets/ceremony.jpg" alt="A figure writes alone by lantern light; every earlier work in the room is draped and turned away, and a stick of sealing wax lies unused on the table." width="520"></p>
+<p align="center"><img src="https://raw.githubusercontent.com/codechu/masterwork/v0.0.2/assets/ceremony.jpg" alt="A figure writes alone by lantern light; every earlier work in the room is draped and turned away, and a stick of sealing wax lies unused on the table." width="520"></p>
 
 `pipeline/ceremony.py` runs the sitting. Four properties are the recipe rather
 than implementation detail, and each was paid for:
@@ -193,10 +193,10 @@ You get the line and its gates, the shape of the sitting, and the method
 written down: how a tale differs from an instruction, where a tale comes from,
 what a question has to do, why instructions come last, and how to tag a tale
 whose effect cannot be separated. That is
-[`corpus/GROWING.md`](https://github.com/codechu/masterwork/blob/v0.0.1/corpus/GROWING.md), and it is the part that transfers.
+[`corpus/GROWING.md`](https://github.com/codechu/masterwork/blob/v0.0.2/corpus/GROWING.md), and it is the part that transfers.
 
 You do not get a corpus. Three pairs come with the repository in
-[`corpus/starter/`](https://github.com/codechu/masterwork/blob/v0.0.1/corpus/starter/) so the machinery runs end to end and the
+[`corpus/starter/`](https://github.com/codechu/masterwork/blob/v0.0.2/corpus/starter/) so the machinery runs end to end and the
 form is unambiguous; they are a beginning and they are meant to be outgrown.
 The corpus is the work, and it has to be yours: a tale is written from
 something **you** measured and got wrong, and a corpus assembled from someone
@@ -252,13 +252,13 @@ the position — a masterwork is submitted, and it can be refused.
 
 | document | when you need it |
 |---|---|
-| [`AGENTS.md`](https://github.com/codechu/masterwork/blob/v0.0.1/AGENTS.md) | before running anything — the refusals, the vocabulary, and the four things not to do. Read it whether or not you are an agent |
-| [`docs/run-spec.md`](https://github.com/codechu/masterwork/blob/v0.0.1/docs/run-spec.md) | writing the JSON for one run, field by field |
-| [`docs/campaigns.md`](https://github.com/codechu/masterwork/blob/v0.0.1/docs/campaigns.md) | repeating an arm to measure a band, or comparing two arms against it |
-| [`docs/gates.md`](https://github.com/codechu/masterwork/blob/v0.0.1/docs/gates.md) | writing a threshold that can hold — start from [`gates/succession.md`](https://github.com/codechu/masterwork/blob/v0.0.1/gates/succession.md) |
-| [`corpus/GROWING.md`](https://github.com/codechu/masterwork/blob/v0.0.1/corpus/GROWING.md) | before writing a single tale — the shape is in [`corpus/starter/`](https://github.com/codechu/masterwork/blob/v0.0.1/corpus/starter/) |
-| [`CHANGELOG.md`](https://github.com/codechu/masterwork/blob/v0.0.1/CHANGELOG.md) | every entry names the incident that caused it |
-| [assets/README.md](https://github.com/codechu/masterwork/blob/v0.0.1/assets/README.md) | you need a fifth image that matches the four |
+| [`AGENTS.md`](https://github.com/codechu/masterwork/blob/v0.0.2/AGENTS.md) | before running anything — the refusals, the vocabulary, and the four things not to do. Read it whether or not you are an agent |
+| [`docs/run-spec.md`](https://github.com/codechu/masterwork/blob/v0.0.2/docs/run-spec.md) | writing the JSON for one run, field by field |
+| [`docs/campaigns.md`](https://github.com/codechu/masterwork/blob/v0.0.2/docs/campaigns.md) | repeating an arm to measure a band, or comparing two arms against it |
+| [`docs/gates.md`](https://github.com/codechu/masterwork/blob/v0.0.2/docs/gates.md) | writing a threshold that can hold — start from [`gates/succession.md`](https://github.com/codechu/masterwork/blob/v0.0.2/gates/succession.md) |
+| [`corpus/GROWING.md`](https://github.com/codechu/masterwork/blob/v0.0.2/corpus/GROWING.md) | before writing a single tale — the shape is in [`corpus/starter/`](https://github.com/codechu/masterwork/blob/v0.0.2/corpus/starter/) |
+| [`CHANGELOG.md`](https://github.com/codechu/masterwork/blob/v0.0.2/CHANGELOG.md) | every entry names the incident that caused it |
+| [assets/README.md](https://github.com/codechu/masterwork/blob/v0.0.2/assets/README.md) | you need a fifth image that matches the four |
 
 <details>
 <summary>Layout</summary>
@@ -276,10 +276,10 @@ runs/       local run directories (ignored — heavy and re-derivable)
 
 ---
 
-<p align="center"><img src="https://raw.githubusercontent.com/codechu/masterwork/v0.0.1/assets/icon.png" alt="Masterwork guild seal — a struck M hallmark inside a rope ring" width="96"></p>
+<p align="center"><img src="https://raw.githubusercontent.com/codechu/masterwork/v0.0.2/assets/icon.png" alt="Masterwork guild seal — a struck M hallmark inside a rope ring" width="96"></p>
 
-Contributing: [CONTRIBUTING.md](https://github.com/codechu/masterwork/blob/v0.0.1/CONTRIBUTING.md) · Changelog:
-[CHANGELOG.md](https://github.com/codechu/masterwork/blob/v0.0.1/CHANGELOG.md) · Licensed under the
-[Apache License 2.0](https://github.com/codechu/masterwork/blob/v0.0.1/LICENSE).
+Contributing: [CONTRIBUTING.md](https://github.com/codechu/masterwork/blob/v0.0.2/CONTRIBUTING.md) · Changelog:
+[CHANGELOG.md](https://github.com/codechu/masterwork/blob/v0.0.2/CHANGELOG.md) · Licensed under the
+[Apache License 2.0](https://github.com/codechu/masterwork/blob/v0.0.2/LICENSE).
 
 Part of [Codechu](https://github.com/codechu).
