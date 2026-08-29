@@ -83,9 +83,13 @@ house improving inside its own loop is a first-class way to use this.
 
 ## Where to start
 
-    python -m pytest tests/ -q         # 78 tests, no network
-    python -m pipeline.gate gates/     # check the example gates
-    less docs/run-spec.md              # the spec, field by field
+```bash
+python -m pytest tests/ -q          # 80 tests, no network
+python -m pipeline.gate gates/      # check the frozen gate templates
+python examples/held_at_gate.py     # one run, end to end, no model needed
+```
 
-Then read `corpus/GROWING.md` before writing a single tale. The corpus is
+The commands and the verdict table above also open the [README](README.md); they are here because this file is where an agent lands first.
+
+Then read [`corpus/GROWING.md`](corpus/GROWING.md) before writing a single tale. The corpus is
 the work; the code is what stops the work from lying to you.
