@@ -60,6 +60,11 @@ jobs:
             echo "::warning::a release for $GITHUB_REF_NAME already exists;" \
                  "leaving its notes alone rather than overwriting them"
           else
+            # Pre-1.0 carries no stability promise, so the release says so
+            # rather than leaving a reader to infer it from the number. Set
+            # by the version, not by hand: marking one release and forgetting
+            # the next is worse than marking none. It stops at 1.0 on its own.
+            case "$v" in 0.*) pre="--prerelease" ;; *) pre="" ;; esac
             gh release create "$GITHUB_REF_NAME" --title "$GITHUB_REF_NAME" \
-              --verify-tag --notes-file /tmp/notes.md
+              --verify-tag $pre --notes-file /tmp/notes.md
           fi
