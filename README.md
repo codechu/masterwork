@@ -132,7 +132,7 @@ deleted, because deciding what to remove is not the line's call.
 
 ## Making a piece
 
-<p align="center"><img src="assets/ceremony.jpg" alt="A figure writes alone by lantern light; every earlier work in the room is draped and turned away, and a stick of sealing wax lies unused on the table." width="380"></p>
+<p align="center"><img src="assets/ceremony.jpg" alt="A figure writes alone by lantern light; every earlier work in the room is draped and turned away, and a stick of sealing wax lies unused on the table." width="520"></p>
 
 `pipeline/ceremony.py` runs the sitting. Four properties are the recipe rather
 than implementation detail, and each was paid for:
