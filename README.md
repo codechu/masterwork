@@ -30,9 +30,9 @@ Nothing to install and nothing to buy. Python 3.10+, the standard library, and
 this repository:
 
 ```bash
-python -m pytest tests/ -q          # 80 tests, no network
-python -m pipeline.gate gates/      # check the frozen gate templates
-python examples/held_at_gate.py     # one run, end to end, no model needed
+python -m pytest tests/ -q        # 80 tests, offline
+python -m pipeline.gate gates/    # check the gate templates
+python examples/held_at_gate.py   # one run, end to end
 ```
 
 Generation and judging are *commands named in a run spec*, so those two stages
