@@ -85,7 +85,7 @@ def inspect(pattern: str, expected: list[str] | None, min_steps: int,
 
 
 def main(argv=None) -> int:
-    ap = argparse.ArgumentParser(description="completeness gate for a battery")
+    ap = argparse.ArgumentParser(prog="masterwork cells", description="completeness gate for a battery")
     ap.add_argument("pattern", help="glob of per-cell record files")
     ap.add_argument("--expect", help="file listing expected cell names, one per line")
     ap.add_argument("--min-steps", type=int, default=2,

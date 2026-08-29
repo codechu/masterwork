@@ -131,7 +131,7 @@ def parse(text: str, rubric: dict):
 
 
 def label(argv=None) -> int:
-    ap = argparse.ArgumentParser(description="label cells blind")
+    ap = argparse.ArgumentParser(prog="masterwork label", description="label cells blind")
     ap.add_argument("--cells", required=True, help="glob of per-cell records (quoted)")
     ap.add_argument("--rubric", required=True, help="axis, verdicts, fields, prompt")
     ap.add_argument("--command", required=True,
@@ -257,7 +257,7 @@ def label(argv=None) -> int:
 
 
 def reveal(argv=None) -> int:
-    ap = argparse.ArgumentParser(description="open the key and join labels to cells")
+    ap = argparse.ArgumentParser(prog="masterwork label reveal", description="open the key and join labels to cells")
     ap.add_argument("--out", required=True, help="directory written by `label`")
     ap.add_argument("--key", help="the key file, if it was not left in <out>")
     ap.add_argument("--to", required=True,
@@ -314,9 +314,14 @@ def reveal(argv=None) -> int:
 
 def main(argv=None) -> int:
     argv = list(sys.argv[1:] if argv is None else argv)
-    if not argv or argv[0] not in ("label", "reveal"):
+    if not argv:
+        # A bare call is a reader asking what this is, not a mistake.
         print(__doc__)
-        return 1
+        return 0
+    if argv[0] not in ("label", "reveal"):
+        print(f"masterwork label: no verb {argv[0]!r} — "
+              "expected 'label' or 'reveal'", file=sys.stderr)
+        return 2
     return (label if argv[0] == "label" else reveal)(argv[1:])
 
 

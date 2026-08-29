@@ -279,6 +279,12 @@ class Line:
             print(f"       running; follow with: tail -f {log}")
             if "journeyman" in c:
                 cfg = c["journeyman"]
+                jm_version, why = measure.tool(cfg)
+                if not self.stage("judge is installed", why is None,
+                                  why or f"{jm_version}"):
+                    self.persist("HELD_WITHOUT_JUDGE")
+                    return 1
+                self.record["judge_tool"] = jm_version
                 rc, summary, tail = measure.run(cfg, log)
                 if not self.stage("judge", rc == 0 and summary is not None,
                                   tail if rc or not summary else
@@ -363,7 +369,7 @@ class Line:
 
 
 def main(argv=None) -> int:
-    ap = argparse.ArgumentParser(description="run one campaign through the line")
+    ap = argparse.ArgumentParser(prog="masterwork line", description="run one campaign through the line")
     ap.add_argument("spec", help="run spec (JSON)")
     ap.add_argument("--out", default="runs", help="where the run record is written")
     a = ap.parse_args(argv)

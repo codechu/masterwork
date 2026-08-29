@@ -86,7 +86,7 @@ def archive(run_dir: str, dest: str) -> list[str]:
 
 
 def main(argv=None) -> int:
-    ap = argparse.ArgumentParser(description="run-directory retention")
+    ap = argparse.ArgumentParser(prog="masterwork retain", description="run-directory retention")
     sub = ap.add_subparsers(dest="cmd", required=True)
     c = sub.add_parser("check", help="report size without deleting anything")
     c.add_argument("run_dir")

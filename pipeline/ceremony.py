@@ -165,7 +165,7 @@ def seal_text(transcript: dict, script_hash: str | None = None) -> str:
 
 
 def main(argv=None) -> int:
-    ap = argparse.ArgumentParser(description="hold a sitting and seal the piece")
+    ap = argparse.ArgumentParser(prog="masterwork ceremony", description="hold a sitting and seal the piece")
     ap.add_argument("corpus", help="the teachings, as text")
     ap.add_argument("script", help="JSON: questions, closing, name, distil")
     ap.add_argument("--endpoint", required=True)

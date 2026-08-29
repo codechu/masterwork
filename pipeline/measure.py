@@ -27,6 +27,7 @@ from __future__ import annotations
 import hashlib
 import json
 import os
+import shutil
 import subprocess
 import time
 import urllib.error
@@ -66,6 +67,47 @@ def build_command(cfg: dict) -> list[str]:
     if cfg.get("judge_endpoint"):
         cmd += ["--judge", base_endpoint(cfg["judge_endpoint"])]
     return cmd
+
+
+MIN_JUDGE = "0.2.1"
+
+
+def tool(cfg: dict) -> tuple[str | None, str | None]:
+    """Find the judge binary and record which one it was.
+
+    masterwork does not measure; it hands the piece to journeyman and
+    carries the verdict. So journeyman is not an optional convenience — a
+    line without it cannot finish, and one that finished must be able to
+    say which build produced the number.
+
+    Without this the missing binary surfaced as `bash: journeyman: command
+    not found` and a stage failure with exit 127 — a shell message standing
+    in for the one thing this line promises to say plainly.
+
+    Returns (version, None) when it is there, or (None, reason).
+    """
+    exe = cfg.get("executable", "journeyman")
+    path = shutil.which(exe)
+    if path is None:
+        return None, (
+            f"{exe} is not on PATH — masterwork hands the piece to journeyman "
+            f"for measurement and cannot score it itself. Install it "
+            f"(`pipx install journeyman-bench`) or point the run spec's "
+            f"judge.journeyman.executable at the binary.")
+    try:
+        p = subprocess.run([path, "--version"], capture_output=True,
+                           text=True, timeout=30)
+    except OSError as e:
+        return None, f"{path} could not be run: {e}"
+    version = (p.stdout or p.stderr).strip().splitlines()
+    if p.returncode != 0 or not version:
+        return None, (
+            f"{path} does not answer --version (exit {p.returncode}); "
+            f"masterwork needs journeyman >= {MIN_JUDGE}, which is where the "
+            f"flag landed. A judge that cannot identify itself cannot stamp a "
+            f"verdict — the number would travel without saying what produced "
+            f"it. Upgrade with `pipx upgrade journeyman-bench`.")
+    return version[0], None
 
 
 def reachable(endpoint: str, timeout: float = 8.0) -> str | None:

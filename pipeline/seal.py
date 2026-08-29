@@ -184,7 +184,7 @@ def verify(identity: str, profile=None, corpus=None, script=None,
 
 
 def main(argv=None) -> int:
-    ap = argparse.ArgumentParser(description="verify a candidate's seal")
+    ap = argparse.ArgumentParser(prog="masterwork seal", description="verify a candidate's seal")
     ap.add_argument("identity", help="path to the sealed identity file")
     ap.add_argument("--corpus", help="corpus file the seal claims")
     ap.add_argument("--script", help="ceremony script the seal claims")

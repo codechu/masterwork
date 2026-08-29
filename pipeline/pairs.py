@@ -186,7 +186,7 @@ def winners(cells: list[dict], axis: str, floor: float, strip_system: bool,
 
 
 def main(argv=None) -> int:
-    ap = argparse.ArgumentParser(description="cut training data from scored runs")
+    ap = argparse.ArgumentParser(prog="masterwork pairs", description="cut training data from scored runs")
     ap.add_argument("run_dir", help="a benchmark run directory (cells/ inside)")
     ap.add_argument("--axis", required=True)
     ap.add_argument("--out", required=True, help="JSONL destination")

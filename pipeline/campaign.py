@@ -154,7 +154,7 @@ class Campaign:
 
 
 def main(argv=None) -> int:
-    ap = argparse.ArgumentParser(description="run a campaign: repeats, band, comparison")
+    ap = argparse.ArgumentParser(prog="masterwork campaign", description="run a campaign: repeats, band, comparison")
     ap.add_argument("spec")
     ap.add_argument("--out", default="runs")
     a = ap.parse_args(argv)

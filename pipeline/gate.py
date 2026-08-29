@@ -203,7 +203,7 @@ def evaluate_section(body: str, measured: dict, incumbent: dict | None = None,
 
 
 def main(argv=None) -> int:
-    ap = argparse.ArgumentParser(description="check frozen gate files")
+    ap = argparse.ArgumentParser(prog="masterwork gate", description="check frozen gate files")
     ap.add_argument("paths", nargs="+", help="gate files, or a directory to walk")
     ap.add_argument("--timeout", type=int, default=60)
     ap.add_argument("--profile", help="JSON map {canonical field: [aliases]}")

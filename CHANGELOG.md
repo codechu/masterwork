@@ -9,6 +9,23 @@ loop has turned around and the work has started serving the instrument.
 
 ## Unreleased
 
+- **One door.** `python -m masterwork <stage>` reaches every stage; they were
+  each only `python -m pipeline.<module>`, four paths a reader had to know and
+  none discoverable from the others. Bare `masterwork` prints the mark and the
+  stages on stdout and exits 0; an unknown stage is an error on stderr, exit 2.
+- **`--version` answers**, from a single record in `pipeline/__init__.py`.
+- **Every stage's help says `masterwork <stage>`** instead of the interpreter's
+  own path (`usage: python3.14 -m pipeline.gate`), which was a different string
+  on every machine and not a command anyone would type.
+- **A missing judge is named, not thrown.** The line hands the piece to
+  journeyman and cannot score it itself, so the judge binary is checked before
+  the stage runs and its version is recorded in the run (`judge_tool`). It was
+  met with the shell's `command not found` and exit 127 — a shell message
+  standing in for the one thing this line promises to say plainly. New held
+  state: `HELD_WITHOUT_JUDGE`.
+- **Removed `info:`** — a 208 KB JPEG committed by accident, referenced from
+  nowhere, matching none of the assets.
+
 ### The line
 - **Seal gate.** A candidate edited in one place and run in another: the copy
   goes stale, the battery comes back clean, and the numbers belong to a

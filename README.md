@@ -30,14 +30,15 @@ Nothing to install and nothing to buy. Python 3.10+, the standard library, and
 this repository:
 
 ```bash
-python -m pytest tests/ -q        # 91 tests, offline
-python -m pipeline.gate gates/    # check the gate templates
+python -m masterwork              # what it is, and its stages
+python -m pytest tests/ -q        # 96 tests, offline
+python -m masterwork gate gates/  # check the gate templates
 python examples/held_at_gate.py   # one run, end to end
 ```
 
 Generation and judging are *commands named in a run spec*, so those two stages
 need whatever you point them at — an inference endpoint you supply, and
-`journeyman` on `PATH` for the judge stage. Everything else in the line is
+`journeyman` (>= 0.2.1) on `PATH` for the judge stage — the line hands the piece over to be measured and records which build did it. Everything else in the line is
 this repository's own and runs offline. The example below names neither, which
 is why it works on a bare checkout:
 
