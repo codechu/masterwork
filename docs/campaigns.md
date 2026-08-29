@@ -4,10 +4,10 @@ One run at a time is [`docs/run-spec.md`](run-spec.md); this is what wraps it.
 
 One run of one arm decides almost nothing. A **band** is the same arm
 repeated with nothing changed but sampling; a **gate** is two arms compared
-against that band. `pipeline/campaign.py` runs both, so the repeats,
+against that band. `masterwork/campaign.py` runs both, so the repeats,
 aggregation and comparison stop being shell loops joined by hand.
 
-    python -m masterwork.campaign campaign.json --out runs
+    masterwork campaign campaign.json --out runs
 
 ```json
 {
@@ -37,6 +37,6 @@ band involved (`resolvable`). A difference inside the band is not a small
 effect; it is an effect this setup cannot see.
 
 The campaign does not decide. It measures the band and the difference; the
-frozen gate — checked separately by `pipeline/gate.py` — is what accepts or
+frozen gate — checked separately by `masterwork/gate.py` — is what accepts or
 rejects. A campaign that measured its own band and then chose the threshold
 under it would be marking its own paper.

@@ -9,6 +9,11 @@ loop has turned around and the work has started serving the instrument.
 
 ## Unreleased
 
+- A diagram of the line in `run-spec.md`, showing what the prose says least
+  clearly: the five places it stops instead of answering.
+- Stale module paths from the package move — `pipeline/` and
+  `python -m masterwork.gate` — corrected everywhere except the changelog,
+  where what an entry said was true when it was written.
 - **A seal profile describes a shape, not a regular expression.**
   `{"date": {"format": "yyyy-MM-dd"}}` replaces
   `(\\d{4}-\\d{2}-\\d{2})` as the way to say where a value sits in a

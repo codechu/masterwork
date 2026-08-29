@@ -142,7 +142,7 @@ live under `runs/`, which version control ignores, and the seal names
 everything needed to re-derive them. The run record and the benchmark's report
 are archived on purpose — both are kilobytes, and between them they carry the
 seal, the grid, the axes, the gate and the verdict. That is what a later
-disagreement is settled with. `pipeline/retain.py archive <run-dir> <dest>`
+disagreement is settled with. `masterwork/retain.py archive <run-dir> <dest>`
 copies out exactly those two; oversized run directories are reported, never
 deleted, because deciding what to remove is not the line's call.
 
@@ -150,7 +150,7 @@ deleted, because deciding what to remove is not the line's call.
 
 <p align="center"><img src="https://raw.githubusercontent.com/codechu/masterwork/v0.0.4/assets/ceremony.jpg" alt="A figure writes alone by lantern light; every earlier work in the room is draped and turned away, and a stick of sealing wax lies unused on the table." width="520"></p>
 
-`pipeline/ceremony.py` runs the sitting. Four properties are the recipe rather
+`masterwork/ceremony.py` runs the sitting. Four properties are the recipe rather
 than implementation detail, and each was paid for:
 
 - **Anchorless.** No earlier commitment or name is anywhere in the context.
@@ -270,12 +270,13 @@ the position — a masterwork is submitted, and it can be refused.
 <summary>Layout</summary>
 
 ```text
-pipeline/   the line: one run, all gates, no manual steps
-tools/      instruments the line calls (blind labelling, gate checks)
-gates/      frozen gate templates — example.md is the smallest one
-examples/   runnable fixtures; the trace above comes from here
-corpus/     the method, and a starter of three tale-and-question pairs
-runs/       local run directories (ignored — heavy and re-derivable)
+masterwork/         the line and every stage it walks
+masterwork/starter/ three tale-and-question pairs, shipped so you can begin
+gates/              frozen gate templates — example.md is the smallest one
+examples/           runnable fixtures; the trace above comes from here
+corpus/             how a corpus grows, and what an invariant costs
+docs/               reference, and one page that is a path
+runs/               local run directories (ignored — heavy and re-derivable)
 ```
 
 </details>

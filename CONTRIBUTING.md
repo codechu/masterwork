@@ -11,7 +11,7 @@ refusal is the failure the repository exists to prevent.
 
 ## Ground rules
 
-- **No dependencies.** `pipeline/` imports the standard library and nothing
+- **No dependencies.** `masterwork/` imports the standard library and nothing
   else — no model client, no HTTP, no vendor SDK, no reference to a serving
   stack. Generation, labelling and judging arrive as commands, so a workshop
   swapping its inference stack does not touch a line of this. A gate that
@@ -47,7 +47,7 @@ development dependency; the code under test needs nothing.
 most valuable thing here, and the bar is that it be mechanical: a rule
 somebody has to remember gets read, agreed with and skipped anyway. If you
 can state the failure as a condition the line can check, it belongs in
-`pipeline/`; if it needs a model to answer, it belongs in `tools/` behind a
+`masterwork/`; if it needs a model to answer, it belongs in `tools/` behind a
 command, like `masterwork/blind_label.py`.
 
 **The method.** [`corpus/GROWING.md`](corpus/GROWING.md) is how a corpus is

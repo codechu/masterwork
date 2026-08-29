@@ -4,8 +4,8 @@ A gate is the decision rule, written down before the run and not edited
 after. It lives in a markdown file so a person can read it; the checker
 executes the part that matters.
 
-    python -m masterwork.gate gates/            # check every gate in a directory
-    python -m masterwork.gate my-gate.md --profile dialect.json
+    masterwork gate gates/            # check every gate in a directory
+    masterwork gate my-gate.md --profile dialect.json
 
 ## The three lines
 

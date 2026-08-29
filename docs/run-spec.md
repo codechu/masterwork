@@ -2,10 +2,26 @@
 
 One JSON file describes a run. The line reads it, walks the stages in order,
 and stops at the first gate that holds. Every field below is what the code
-actually reads — `pipeline/line.py` is the authority; this file explains why
+actually reads — `masterwork/line.py` is the authority; this file explains why
 each one is there.
 
-    python -m masterwork.line spec.json --out runs
+    masterwork line spec.json --out runs
+
+Every stage is optional except `purpose`. What matters in the picture below
+is the right-hand column: the places the line stops instead of answering.
+
+```mermaid
+flowchart TD
+    P[purpose] --> S[seal] --> G[generate] --> C[cells] --> L[label]
+    L --> J[judge] --> A[gate] --> V([verdict])
+    S -. seal incomplete .-> HS([HELD_AT_SEAL])
+    C -. cells missing .-> HC([FAILED_IN_COMPLETENESS])
+    L -. labels missing .-> HL([HELD_FOR_LABELLING])
+    J -. self-judged or non-standard .-> HM([HELD_AT_MEASUREMENT])
+    A -. nothing was measured .-> HW([HELD_WITHOUT_MEASUREMENT])
+```
+
+A held run is waiting, not broken — and never a pass.
 
 ## purpose — required
 

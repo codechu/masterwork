@@ -109,7 +109,7 @@ Ordered by how often the word carries a sentence here, not by importance.
 
 ```bash
 python -m pytest tests/ -q          # 102 tests, no network
-python -m masterwork.gate gates/      # check the frozen gate templates
+masterwork gate gates/      # check the frozen gate templates
 python examples/held_at_gate.py     # one run, end to end, no model needed
 ```
 
