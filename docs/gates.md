@@ -97,3 +97,10 @@ learned the expensive way:
   because a judged axis scored over three cells changes by exactly a third
   when one cell flips. A judged axis at small cell counts cannot carry a
   gate: the fix is more cells, not more votes.
+
+## Two written out
+
+[`gates/example.md`](../gates/example.md) is the smallest gate that passes the
+checker — one section, one band, one threshold above it.
+[`gates/succession.md`](../gates/succession.md) is the one this house actually
+froze, with the analytic band marked as a precursor to the measured one.
