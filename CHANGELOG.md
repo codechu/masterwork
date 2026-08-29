@@ -9,6 +9,13 @@ loop has turned around and the work has started serving the instrument.
 
 ## Unreleased
 
+- **`docs/first-run.md`** — the only page that is a path rather than a
+  reference. Everything else answers a question you already have; this one
+  goes from `pipx install` to a sealed candidate, using the starter corpus
+  that was already shipped for exactly that and was connected to nothing.
+  Every command in it was run to write it, which is how the script-hash
+  bug above was found.
+
 - **`--script` verification could never pass.** The sitting hashed a
   re-serialisation of the parsed script (`json.dumps`, sorted keys) while
   the seal gate hashes the file on disk, so every piece the ceremony had

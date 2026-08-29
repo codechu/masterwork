@@ -34,6 +34,8 @@ masterwork                   # what it is, and its stages
 masterwork gate gates/       # check the gate templates
 ```
 
+Start-to-finish, one command at a time: [`docs/first-run.md`](https://github.com/codechu/masterwork/blob/v0.0.2/docs/first-run.md).
+
 Or from a clone, with nothing installed at all:
 
 ```bash
@@ -252,6 +254,7 @@ the position — a masterwork is submitted, and it can be refused.
 
 | document | when you need it |
 |---|---|
+| [`docs/first-run.md`](https://github.com/codechu/masterwork/blob/v0.0.2/docs/first-run.md) | **start here** — nothing to a sealed candidate, one command at a time |
 | [`AGENTS.md`](https://github.com/codechu/masterwork/blob/v0.0.2/AGENTS.md) | before running anything — the refusals, the vocabulary, and the four things not to do. Read it whether or not you are an agent |
 | [`docs/ceremony.md`](https://github.com/codechu/masterwork/blob/v0.0.2/docs/ceremony.md) | making a piece: the four properties of the sitting, and the script that drives it |
 | [`docs/seal.md`](https://github.com/codechu/masterwork/blob/v0.0.2/docs/seal.md) | the five fields a candidate carries, and what to do when the gate refuses one |
