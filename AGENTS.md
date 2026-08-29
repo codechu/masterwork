@@ -83,7 +83,7 @@ house improving inside its own loop is a first-class way to use this.
 
 ## Where to start
 
-    python -m pytest tests/ -q         # 77 tests, no network
+    python -m pytest tests/ -q         # 78 tests, no network
     python -m pipeline.gate gates/     # check the example gates
     less docs/run-spec.md              # the spec, field by field
 
