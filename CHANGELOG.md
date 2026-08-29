@@ -7,7 +7,7 @@ The rule this enforces: the tools are fed by failures met while doing real
 work. When a change can only cite a run staged to exercise the tool, the
 loop has turned around and the work has started serving the instrument.
 
-## Unreleased
+## 0.0.3 — 2026-08-29
 
 - **`docs/first-run.md`** — the only page that is a path rather than a
   reference. Everything else answers a question you already have; this one
