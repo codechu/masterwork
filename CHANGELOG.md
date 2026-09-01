@@ -7,7 +7,7 @@ The rule this enforces: the tools are fed by failures met while doing real
 work. When a change can only cite a run staged to exercise the tool, the
 loop has turned around and the work has started serving the instrument.
 
-## Unreleased
+## 0.0.5 — 2026-09-01
 
 - **The line read the benchmark's report without checking its shape.**
   `report.json` carries `schema_version`, and the benchmark's own guidance
