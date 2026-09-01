@@ -19,6 +19,13 @@ loop has turned around and the work has started serving the instrument.
   exists, since GitHub renders an unknown one as a grey "no status" rather
   than an error.
 
+- **A badge whose target was renamed dies without a sound.** The status
+  badge cannot be tested — "unproven" is a judgement, not a fact — but
+  where it *leads* can be: every badge target in the row is now resolved,
+  anchors included, against the headings and files that have to exist for
+  it. Shown to fire before it was kept: renaming `#run-it` to something
+  else fails the suite instead of quietly turning a link into a picture.
+
 ## 0.0.5 — 2026-09-01
 
 - **The line read the benchmark's report without checking its shape.**

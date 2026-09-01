@@ -92,3 +92,33 @@ def test_ci_badge_points_at_a_workflow_that_exists():
     m = re.search(r"actions/workflows/([\w.-]+)/badge\.svg", read("README.md"))
     assert m, "the CI badge changed shape; update this test"
     assert os.path.exists(os.path.join(ROOT, ".github", "workflows", m.group(1)))
+
+
+def _slug(heading: str) -> str:
+    """GitHub's anchor rule: lowercase, drop anything but word chars, spaces
+    and hyphens, then spaces to hyphens."""
+    s = heading.strip().lower()
+    s = re.sub(r"[^\w\s-]", "", s)
+    return re.sub(r"\s+", "-", s)
+
+
+def test_every_badge_links_somewhere_that_exists():
+    """The status badge is a judgement, so no test can check that it is
+    true. What can be checked is that it still leads somewhere: this row
+    has already carried one badge that went stale, and a badge pointing at
+    a heading that was renamed dies silently — nothing fails, it just stops
+    being a link and starts being a picture."""
+    row = next(ln for ln in read("README.md").splitlines()
+               if ln.startswith("[![") and "shields.io" in ln
+               or ln.startswith("[![ci]"))
+    targets = re.findall(r"\)\]\(([^)]+)\)", row)
+    assert targets, "no badge link targets found; update this test"
+    for t in targets:
+        if t.startswith("http"):
+            continue
+        path, _, anchor = t.partition("#")
+        name = path or "README.md"
+        assert os.path.exists(os.path.join(ROOT, name)), f"{t} points at nothing"
+        if anchor:
+            heads = {_slug(h) for h in re.findall(r"(?m)^#+\s+(.+)$", read(name))}
+            assert anchor in heads, f"{t}: no heading makes that anchor"
