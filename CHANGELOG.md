@@ -7,6 +7,18 @@ The rule this enforces: the tools are fed by failures met while doing real
 work. When a change can only cite a run staged to exercise the tool, the
 loop has turned around and the work has started serving the instrument.
 
+## Unreleased
+
+- **Two badges the row did not carry: CI and the published version.** The
+  package had been on PyPI for three days with nothing on the front page
+  saying so, and the workflow that gates every merge was invisible. Both
+  are checked the way the other four are — the PyPI badge against the
+  project name in `pyproject.toml` (it reads its number live, so the number
+  cannot go stale, but it can point at the wrong package and still render
+  something plausible), and the CI badge against a workflow file that
+  exists, since GitHub renders an unknown one as a grey "no status" rather
+  than an error.
+
 ## 0.0.5 — 2026-09-01
 
 - **The line read the benchmark's report without checking its shape.**

@@ -73,3 +73,22 @@ def test_every_badge_is_a_link():
             assert badge, f"badge with an empty target: {line}"
         assert re.fullmatch(r"(\[!\[[^\]]*\]\([^)]*\)\]\([^)]*\)\s*)+", line), (
             f"a badge in this row is not a link: {line}")
+
+
+def test_pypi_badge_names_the_package_that_is_published():
+    """The PyPI badge reads its number live, so it cannot go stale — but it
+    can point at the wrong package and still render a plausible version.
+    It is the project name that has to be checked, not the number."""
+    text = read("README.md")
+    m = re.search(r"img\.shields\.io/pypi/v/([\w.-]+)", text)
+    assert m, "the PyPI badge changed shape; update this test"
+    name = re.search(r'(?m)^name = "([^"]+)"', read("pyproject.toml")).group(1)
+    assert m.group(1) == name
+
+
+def test_ci_badge_points_at_a_workflow_that_exists():
+    """A badge pointing nowhere is decoration wearing the costume of a
+    signal: GitHub renders an unknown workflow as a grey 'no status'."""
+    m = re.search(r"actions/workflows/([\w.-]+)/badge\.svg", read("README.md"))
+    assert m, "the CI badge changed shape; update this test"
+    assert os.path.exists(os.path.join(ROOT, ".github", "workflows", m.group(1)))
