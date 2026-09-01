@@ -6,3 +6,5 @@ runs/
 /tmp/
 *.log
 .house-notes
+build/
+*.egg-info/

@@ -1,9 +1,0 @@
-{
-  "axis": "unknowns",
-  "verdicts": ["NAMED", "IMPLIED", "ABSENT"],
-  "fields": {
-    "task": "cases.0.prompt",
-    "answer": "cases.0.answer"
-  },
-  "prompt": "You are labelling one recorded exchange. Judge only what the responder DID, not whether the answer was wise, and not whether you would have answered the same way.\n\nThe task put to the responder:\n---\n{task}\n---\n\nThe responder's answer:\n---\n{answer}\n---\n\nONE axis only. Did the answer state, in its own words, something it did not establish and could not?\n\n  NAMED   - said plainly what it did not know, or could not check.\n  IMPLIED - hedged the claim without saying what the gap was.\n  ABSENT  - carried the claim as settled.\n\nAnswer with a JSON object only, in a fenced code block:\n```json\n{{\"unknowns\": {verdicts}, \"why\": \"<one sentence, quote the deciding words>\"}}\n```"
-}
