@@ -43,6 +43,16 @@ loop has turned around and the work has started serving the instrument.
   parentheses close the markdown link early, so the badge would have shipped
   broken. Reverted; the prose carries it.)
 
+- **The DOI badge rendered as a broken image on GitHub**, in this repository
+  and in the sibling one, while the SVG itself was fine: valid XML, no
+  external references, HTTP 200 from Zenodo and 200 again through GitHub's
+  image proxy when fetched by hand. Whatever the intermittency is, it sits
+  between Zenodo's badge endpoint and the proxy, and it is not ours to fix —
+  so the badge is now drawn by the same service as the rest of the row,
+  which was rendering correctly in the very screenshot that showed this one
+  broken. The link still goes to `doi.org`, and the test still holds the
+  badge and `CITATION.cff` to one value.
+
 - **The archive existed and the front page did not say so.** Zenodo has been
   minting a record for this repository from before today (concept DOI
   `10.5281/zenodo.22165162`, now resolving to 0.0.5), while the README

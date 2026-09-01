@@ -129,12 +129,11 @@ def test_the_doi_badge_and_the_citation_name_the_same_archive():
     concept DOI that belongs in both — the one that resolves to the newest
     version — so a reader who cites the paper and a reader who clicks the
     badge land on the same record."""
-    badge = re.search(r"zenodo\.org/badge/DOI/([\d.]+/zenodo\.\d+)\.svg",
-                      read("README.md"))
+    badge = re.search(r"badge/DOI-([\d.]+)%2F(zenodo\.\d+)-", read("README.md"))
     assert badge, "the DOI badge changed shape; update this test"
     cited = re.search(r"(?m)^doi: (\S+)", read("CITATION.cff"))
     assert cited, "CITATION.cff carries no doi"
-    assert badge.group(1) == cited.group(1)
+    assert f"{badge.group(1)}/{badge.group(2)}" == cited.group(1)
 
 
 def test_the_prose_does_not_claim_what_the_badge_denies():
