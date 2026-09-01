@@ -26,6 +26,13 @@ loop has turned around and the work has started serving the instrument.
   it. Shown to fire before it was kept: renaming `#run-it` to something
   else fails the suite instead of quietly turning a link into a picture.
 
+- **Actions pinned to majors that run on Node 24.** `checkout@v4` and
+  `setup-python@v5` target Node 20 and were being force-run on 24 by the
+  runner. The checkout bump carries an upstream breaking change — fork PR
+  code is not checked out under `pull_request_target` or `workflow_run`
+  without an explicit opt-in — which reaches nothing here: this repository
+  builds on `push` and `pull_request` only.
+
 - **"Dependency-free" was on the front page while `pip` fetched a package.**
   Three surfaces carried two answers: the README opening line and the GitHub
   topic `no-dependencies` said none, the badge two lines below said one, and

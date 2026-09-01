@@ -13,8 +13,8 @@ jobs:
     # which is the worst place to fail: the upload cannot be repeated.
     permissions: {id-token: write, contents: write}
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-python@v5
+      - uses: actions/checkout@v5
+      - uses: actions/setup-python@v6
         with: {python-version: "3.12"}
       # Nothing checked the tag against the packaged version, so a tag could
       # ship a package stamped with something else entirely.
