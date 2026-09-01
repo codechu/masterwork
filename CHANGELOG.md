@@ -26,6 +26,15 @@ loop has turned around and the work has started serving the instrument.
   it. Shown to fire before it was kept: renaming `#run-it` to something
   else fails the suite instead of quietly turning a link into a picture.
 
+- **The archive existed and the front page did not say so.** Zenodo has been
+  minting a record for this repository from before today (concept DOI
+  `10.5281/zenodo.22165162`, now resolving to 0.0.5), while the README
+  carried no DOI badge and `CITATION.cff` carried no `doi:` at all — the
+  citable artefact and the thing citing it had nothing joining them. Both
+  now name the concept DOI, the one that follows the newest version, and a
+  test holds them to the same value: shown to fire by pointing the citation
+  at a different record.
+
 ## 0.0.5 — 2026-09-01
 
 - **The line read the benchmark's report without checking its shape.**
