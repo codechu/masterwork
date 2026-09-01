@@ -1,0 +1,8 @@
+blank_issues_enabled: true
+contact_links:
+  - name: Question / discussion
+    url: https://github.com/codechu/masterwork/discussions
+    about: For usage questions, ideas and design threads — anything that is not a defect.
+  - name: The benchmark that scores the line
+    url: https://github.com/codechu/journeyman
+    about: Scoring, judges, scenes and report.json belong over there, not here.
