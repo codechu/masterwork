@@ -9,6 +9,26 @@ loop has turned around and the work has started serving the instrument.
 
 ## Unreleased
 
+- **The line read the benchmark's report without checking its shape.**
+  `report.json` carries `schema_version`, and the benchmark's own guidance
+  to integrators is to pin on it rather than on the release number — advice
+  this repository gave a stranger in a public thread while not following it
+  itself. `read_report` now refuses a shape it does not know instead of
+  scoring it. The two fixtures that had to change to make this pass are the
+  other half of the finding: both were hand-written report dicts with no
+  `schema_version` in them, so the tests were confirming a shape this line
+  invented rather than the one the benchmark writes.
+
+- **The dependency had no upper bound**, while the benchmark documents that
+  pre-1.0 the MINOR digit is where a breaking change goes. `>=0.2.1` alone
+  invited in exactly the releases allowed to break this. Now
+  `>=0.2.1,<0.5.0`, read-compatible through 0.4.x.
+
+- **A second, older copy of the package was in the tree.** `build/lib/masterwork`
+  was committed on 2026-08-29 and stood still while the real package moved:
+  `seal.py` 216 lines against 286, `__main__.py` 116 against 149. Removed with
+  the egg-info metadata beside it; `.gitignore` names both so it cannot return.
+
 - A diagram of the line in `run-spec.md`, showing what the prose says least
   clearly: the five places it stops instead of answering.
 - Stale module paths from the package move — `pipeline/` and

@@ -35,7 +35,9 @@ def test_empty_axes_is_not_a_pass():
 def test_reads_the_report_contract():
     with tempfile.TemporaryDirectory() as tmp:
         p = os.path.join(tmp, "report.json")
-        json.dump({"axes": {"grounding": {"score": 1.0, "n": 2},
+        # shape: journeyman/report.py:178 (schema_version written on every report)
+        json.dump({"schema_version": 1,
+                   "axes": {"grounding": {"score": 1.0, "n": 2},
                             "wall-pricing": {"score": 0.5, "n": 2}},
                    "self_judged": False, "seal": {"bench": "0.1.0"}}, open(p, "w"))
         s = measure.read_report(p)
@@ -48,7 +50,7 @@ def test_newest_report_is_found_under_a_runs_dir():
         d = os.path.join(tmp, "run-a")
         os.makedirs(d)
         p = os.path.join(d, "report.json")
-        json.dump({"axes": {}}, open(p, "w"))
+        json.dump({"schema_version": 1, "axes": {}}, open(p, "w"))
         assert measure.newest_report(tmp) == p
 
 
@@ -99,3 +101,17 @@ def test_different_piece_is_caught():
 
 def test_unreachable_endpoint_is_reported_before_the_run():
     assert measure.reachable("http://127.0.0.1:1/v1", timeout=1)
+
+
+def test_a_report_shape_we_do_not_know_is_refused():
+    """The benchmark's own guidance to integrators: pin on schema_version,
+    and on a value you do not know, stop rather than guess. A reader that
+    guesses turns a changed shape into a wrong number instead of an error."""
+    import pytest
+    with tempfile.TemporaryDirectory() as tmp:
+        p = os.path.join(tmp, "report.json")
+        json.dump({"schema_version": 2, "axes": {"grounding": {"score": 1.0}}},
+                  open(p, "w"))
+        with pytest.raises(SystemExit) as e:
+            measure.read_report(p)
+        assert "schema_version 2" in str(e.value)

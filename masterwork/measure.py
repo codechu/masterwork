@@ -138,8 +138,25 @@ def newest_report(runs_dir: str) -> str | None:
     return max(found)[1] if found else None
 
 
+# The shape of report.json this line knows how to read. The benchmark
+# bumps this integer only when the shape changes in a way that can break a
+# reader, and its own guidance to integrators is to pin here rather than on
+# the release number — the package moves for reasons that never touch the
+# report. On a value we do not know we stop, because a reader that guesses
+# turns a changed shape into a wrong number instead of an error.
+KNOWN_SCHEMA = 1
+
+
 def read_report(path: str) -> dict:
     d = json.load(open(path, encoding="utf-8"))
+    got = d.get("schema_version")
+    if got != KNOWN_SCHEMA:
+        raise SystemExit(
+            f"{path} carries schema_version {got!r}; this line reads "
+            f"{KNOWN_SCHEMA}. A report written to a shape we do not know is "
+            f"not a report we may score. Upgrade masterwork, or re-render "
+            f"the report from its cells with the benchmark that wrote them."
+        )
     axes = d.get("axes") or {}
     return {
         "report": path,

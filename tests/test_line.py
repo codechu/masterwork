@@ -131,7 +131,7 @@ def test_self_judged_measurement_never_reaches_the_gate():
         spec = build(tmp)
         report = os.path.join(tmp, "report.json")
         json.dump({"axes": {"grounding": {"score": 1.0, "n": 1}},
-                   "self_judged": True}, open(report, "w"))
+                   "self_judged": True, "schema_version": 1}, open(report, "w"))
         spec["judge"] = {"journeyman": {"endpoint": "http://x/v1",
                                         "executable": "true", "report": report,
                                         "skip_preflight": True}}
