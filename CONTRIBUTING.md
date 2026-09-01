@@ -11,9 +11,12 @@ refusal is the failure the repository exists to prevent.
 
 ## Ground rules
 
-- **No dependencies.** `masterwork/` imports the standard library and nothing
-  else — no model client, no HTTP, no vendor SDK, no reference to a serving
-  stack. Generation, labelling and judging arrive as commands, so a workshop
+- **Nothing imported but the standard library.** `masterwork/` imports the
+  standard library and nothing else — no model client, no HTTP, no vendor SDK,
+  no reference to a serving stack. One package is *declared*: the judge, which
+  arrives as a command and is never imported. Claiming the package has none,
+  when `pip` fetches another one for it, is a claim the badge already
+  contradicts — so the narrow sentence is the one to write. Generation, labelling and judging arrive as commands, so a workshop
   swapping its inference stack does not touch a line of this. A gate that
   only fires on one house's plumbing is not a gate, it is a habit.
 - **Gates are read, never written.** Nothing that runs may edit a threshold.

@@ -26,6 +26,17 @@ loop has turned around and the work has started serving the instrument.
   it. Shown to fire before it was kept: renaming `#run-it` to something
   else fails the suite instead of quietly turning a link into a picture.
 
+- **"Dependency-free" was on the front page while `pip` fetched a package.**
+  Three surfaces carried two answers: the README opening line and the GitHub
+  topic `no-dependencies` said none, the badge two lines below said one, and
+  the badge was the honest one — it is computed from `pyproject.toml`, the
+  prose was computed from nothing. The narrow claim is the true one and is
+  the better sentence anyway: nothing is imported beyond the standard
+  library, and the judge arrives as a command, never as an import. Prose,
+  topic and badge now agree, and a test refuses the wide claim in README,
+  README.pypi and CONTRIBUTING for as long as a dependency is declared —
+  shown to fire by putting the old sentence back.
+
 - **The archive existed and the front page did not say so.** Zenodo has been
   minting a record for this repository from before today (concept DOI
   `10.5281/zenodo.22165162`, now resolving to 0.0.5), while the README

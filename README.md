@@ -6,12 +6,13 @@
 
 *Makes a character for a model. Does not score it.*
 
-A dependency-free Python pipeline. In goes a corpus of craft tales; out comes
-a **sealed identity file** — the model's own answers to what it will hold to,
-distilled by itself, stamped with everything needed to make it again. Scoring
-happens somewhere else: the line hands the piece to
-[journeyman](https://github.com/codechu/journeyman) and applies a rule that was
-frozen before the run. The name is the doctrine — a *masterwork* is the piece a
+A Python pipeline that imports nothing but the standard library. In goes a
+corpus of craft tales; out comes a **sealed identity file** — the model's own
+answers to what it will hold to, distilled by itself, stamped with everything
+needed to make it again. Scoring happens somewhere else: the line hands the
+piece to [journeyman](https://github.com/codechu/journeyman) — the one package
+it declares, invoked as a command and never imported — and applies a rule that
+was frozen before the run. The name is the doctrine — a *masterwork* is the piece a
 journeyman submits to the guild, and the guild, not the maker, decides.
 
 > **journeyman: measures, does not teach.**<br>

@@ -135,3 +135,21 @@ def test_the_doi_badge_and_the_citation_name_the_same_archive():
     cited = re.search(r"(?m)^doi: (\S+)", read("CITATION.cff"))
     assert cited, "CITATION.cff carries no doi"
     assert badge.group(1) == cited.group(1)
+
+
+def test_the_prose_does_not_claim_what_the_badge_denies():
+    """The badge counts dependencies from pyproject and is checked against
+    it. The prose was not checked against anything, and said
+    "dependency-free" of a package `pip` installs another package for. The
+    narrow claim — nothing imported beyond the standard library — is true
+    and is the one worth making; the wide one contradicts the badge two
+    lines below it."""
+    if not project()["dependencies"]:
+        return
+    for name in ("README.md", "README.pypi.md", "CONTRIBUTING.md"):
+        text = read(name).lower()
+        for claim in ("dependency-free", "no dependencies", "zero dependencies",
+                      "dependency free"):
+            assert claim not in text, (
+                f"{name} says {claim!r} while pyproject declares "
+                f"{project()['dependencies']}")
