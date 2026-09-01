@@ -36,6 +36,12 @@ loop has turned around and the work has started serving the instrument.
   topic and badge now agree, and a test refuses the wide claim in README,
   README.pypi and CONTRIBUTING for as long as a dependency is declared —
   shown to fire by putting the old sentence back.
+  The replacement sentence says why the package is there rather than
+  apologising for it: a line that could finish without its judge would be a
+  line grading its own work. (A first attempt also wrote that into the badge
+  label — `dependencies-1 (the judge)` — and the suite caught it: the bare
+  parentheses close the markdown link early, so the badge would have shipped
+  broken. Reverted; the prose carries it.)
 
 - **The archive existed and the front page did not say so.** Zenodo has been
   minting a record for this repository from before today (concept DOI

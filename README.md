@@ -9,10 +9,12 @@
 A Python pipeline that imports nothing but the standard library. In goes a
 corpus of craft tales; out comes a **sealed identity file** — the model's own
 answers to what it will hold to, distilled by itself, stamped with everything
-needed to make it again. Scoring happens somewhere else: the line hands the
-piece to [journeyman](https://github.com/codechu/journeyman) — the one package
-it declares, invoked as a command and never imported — and applies a rule that
-was frozen before the run. The name is the doctrine — a *masterwork* is the piece a
+needed to make it again. Scoring happens somewhere else, and that is the
+design: the line hands the piece to
+[journeyman](https://github.com/codechu/journeyman) and applies a rule that was
+frozen before the run. That judge is the one package this declares — invoked as
+a command, never imported — because a line that could finish without it would
+be a line grading its own work. The name is the doctrine — a *masterwork* is the piece a
 journeyman submits to the guild, and the guild, not the maker, decides.
 
 > **journeyman: measures, does not teach.**<br>
