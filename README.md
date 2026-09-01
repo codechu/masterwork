@@ -2,7 +2,7 @@
 
 # Masterwork
 
-[![ci](https://github.com/codechu/masterwork/actions/workflows/ci.yml/badge.svg)](https://github.com/codechu/masterwork/actions/workflows/ci.yml) [![PyPI](https://img.shields.io/pypi/v/masterwork?color=blue)](https://pypi.org/project/masterwork/) [![python](https://img.shields.io/badge/python-3.10%2B-blue)](#run-it) [![license](https://img.shields.io/badge/license-Apache--2.0-blue)](LICENSE) [![dependencies](https://img.shields.io/badge/dependencies-1-brightgreen)](CONTRIBUTING.md#ground-rules) [![status](https://img.shields.io/badge/status-unproven-lightgrey)](#status)
+[![ci](https://github.com/codechu/masterwork/actions/workflows/ci.yml/badge.svg)](https://github.com/codechu/masterwork/actions/workflows/ci.yml) [![PyPI](https://img.shields.io/pypi/v/masterwork?color=blue)](https://pypi.org/project/masterwork/) [![python](https://img.shields.io/badge/python-3.10%2B-blue)](#run-it) [![license](https://img.shields.io/badge/license-Apache--2.0-blue)](LICENSE) [![dependencies](https://img.shields.io/badge/dependencies-1-brightgreen)](CONTRIBUTING.md#ground-rules) [![status](https://img.shields.io/badge/status-unproven-lightgrey)](#status) [![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.22165162.svg)](https://doi.org/10.5281/zenodo.22165162)
 
 *Makes a character for a model. Does not score it.*
 

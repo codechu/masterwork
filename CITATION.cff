@@ -16,6 +16,7 @@ authors:
     given-names: "Onur"
     affiliation: "Codechu"
 repository-code: "https://github.com/codechu/masterwork"
+doi: 10.5281/zenodo.22165162
 url: "https://pypi.org/project/masterwork/"
 license: Apache-2.0
 version: 0.0.5
